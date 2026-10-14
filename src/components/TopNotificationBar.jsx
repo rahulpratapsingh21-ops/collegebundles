@@ -133,25 +133,6 @@ export default function TopNotificationBar({ onOpenLeadModal, onOpenAdminDrawer 
           >
             <Sparkles size={11} /> Apply Scholarship
           </button>
-
-          {/* Admin Leads button for site owner */}
-          {onOpenAdminDrawer && (
-            <button
-              onClick={onOpenAdminDrawer}
-              style={{
-                background: 'transparent',
-                color: '#94a3b8',
-                border: '1px solid #334155',
-                padding: '0.15rem 0.5rem',
-                borderRadius: '4px',
-                fontSize: '0.68rem',
-                cursor: 'pointer',
-              }}
-              title="Site Owner: View Captured Leads"
-            >
-              Leads CRM
-            </button>
-          )}
         </div>
       </div>
     </div>

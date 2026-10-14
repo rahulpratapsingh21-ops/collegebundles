@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Logo from './Logo';
-import { Phone, Mail, MapPin, MessageCircle, Sparkles, Send, ShieldCheck, Heart, Loader2 } from 'lucide-react';
+import { Phone, Mail, MapPin, MessageCircle, Sparkles, Send, ShieldCheck, Heart, Loader2, Lock } from 'lucide-react';
 import { subscribeNewsletter } from '../lib/supabaseClient';
 
 export default function Footer({ onSelectCategory, onOpenLeadModal, onOpenAICounselor, onOpenAdminDrawer }) {
@@ -309,16 +309,6 @@ export default function Footer({ onSelectCategory, onOpenLeadModal, onOpenAICoun
                   Request 50% Scholarship
                 </button>
               </li>
-              {onOpenAdminDrawer && (
-                <li>
-                  <button
-                    onClick={onOpenAdminDrawer}
-                    style={{ color: '#64748b', fontSize: '0.75rem', textDecoration: 'underline' }}
-                  >
-                    Site Owner Leads CRM
-                  </button>
-                </li>
-              )}
             </ul>
           </div>
         </div>
@@ -346,6 +336,29 @@ export default function Footer({ onSelectCategory, onOpenLeadModal, onOpenAICoun
             <span>UGC-DEB & AICTE Information Portal</span>
             <span>Privacy Policy</span>
             <span>Terms of Advisory</span>
+            {onOpenAdminDrawer && (
+              <button
+                onClick={onOpenAdminDrawer}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#64748b',
+                  fontSize: '0.72rem',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                  padding: 0,
+                  opacity: 0.5,
+                  transition: 'opacity 0.2s',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+                onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.5')}
+                title="Staff Portal (Password Protected)"
+              >
+                <Lock size={11} /> Admin Portal
+              </button>
+            )}
           </div>
         </div>
       </div>

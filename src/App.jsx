@@ -55,6 +55,30 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [hasTriggeredScrollLead]);
 
+  // Secret Admin Portal triggers: #admin, ?admin=true, or Ctrl+Shift+A
+  useEffect(() => {
+    const checkAdminTrigger = () => {
+      if (window.location.hash === '#admin' || window.location.search.includes('admin=true')) {
+        setIsAdminDrawerOpen(true);
+      }
+    };
+    checkAdminTrigger();
+    window.addEventListener('hashchange', checkAdminTrigger);
+
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault();
+        setIsAdminDrawerOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('hashchange', checkAdminTrigger);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 4000);
