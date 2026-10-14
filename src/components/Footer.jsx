@@ -331,33 +331,34 @@ export default function Footer({ onSelectCategory, onOpenLeadModal, onOpenAICoun
             © {new Date().getFullYear()} <strong>CollegeBundles.in</strong>. All Rights Reserved. Empowering education seekers across India.
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
             <span>Helpline: <strong>8802155810</strong></span>
             <span>UGC-DEB & AICTE Information Portal</span>
             <span>Privacy Policy</span>
             <span>Terms of Advisory</span>
             {onOpenAdminDrawer && (
-              <button
-                onClick={onOpenAdminDrawer}
+              <a
+                href="#admin"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onOpenAdminDrawer();
+                }}
                 style={{
-                  background: 'none',
-                  border: 'none',
                   color: '#64748b',
-                  fontSize: '0.72rem',
-                  cursor: 'pointer',
+                  fontSize: '0.75rem',
+                  textDecoration: 'none',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.25rem',
-                  padding: 0,
-                  opacity: 0.5,
-                  transition: 'opacity 0.2s',
+                  cursor: 'pointer',
+                  transition: 'color 0.2s',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.5')}
-                title="Staff Portal (Password Protected)"
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#38bdf8')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#64748b')}
+                title="Admin Panel (Passcode Protected)"
               >
-                <Lock size={11} /> Admin Portal
-              </button>
+                <Lock size={12} /> Admin Panel
+              </a>
             )}
           </div>
         </div>
