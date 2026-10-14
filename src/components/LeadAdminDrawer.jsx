@@ -22,8 +22,13 @@ import {
 } from 'lucide-react';
 import { fetchLeads, updateLeadStatus, deleteLead } from '../lib/supabaseClient';
 
-// Allowed Admin Passcodes
-const VALID_PASSCODES = ['admin@2026', '8802155810', 'admin8802'];
+// Default Master Passcodes
+export const DEFAULT_ADMIN_PASSCODES = ['admin@2026', '8802155810', 'admin8802'];
+
+export function getValidPasscodes() {
+  const custom = localStorage.getItem('cb_admin_custom_pin');
+  return custom ? [custom, ...DEFAULT_ADMIN_PASSCODES] : DEFAULT_ADMIN_PASSCODES;
+}
 
 export default function LeadAdminDrawer({ isOpen, onClose }) {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -32,6 +37,11 @@ export default function LeadAdminDrawer({ isOpen, onClose }) {
   const [passcode, setPasscode] = useState('');
   const [showPasscode, setShowPasscode] = useState(false);
   const [authError, setAuthError] = useState('');
+
+  // Password Management States
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [newPassInput, setNewPassInput] = useState('');
+  const [passwordChangeMsg, setPasswordChangeMsg] = useState('');
 
   const [leads, setLeads] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -62,7 +72,8 @@ export default function LeadAdminDrawer({ isOpen, onClose }) {
   const handleVerifyPasscode = (e) => {
     e.preventDefault();
     const cleanInput = passcode.trim();
-    if (VALID_PASSCODES.includes(cleanInput)) {
+    const validCodes = getValidPasscodes();
+    if (validCodes.includes(cleanInput)) {
       sessionStorage.setItem('cb_admin_authenticated', 'true');
       setIsAuthenticated(true);
       setAuthError('');
@@ -73,9 +84,35 @@ export default function LeadAdminDrawer({ isOpen, onClose }) {
     }
   };
 
+  const handleSaveNewPassword = (e) => {
+    e.preventDefault();
+    const clean = newPassInput.trim();
+    if (clean.length < 4) {
+      setPasswordChangeMsg('Error: Password must be at least 4 characters long.');
+      return;
+    }
+    localStorage.setItem('cb_admin_custom_pin', clean);
+    setPasswordChangeMsg(`✔ Admin password updated successfully to: "${clean}"`);
+    setNewPassInput('');
+    setTimeout(() => {
+      setPasswordChangeMsg('');
+      setIsChangingPassword(false);
+    }, 2500);
+  };
+
+  const handleResetPassword = () => {
+    localStorage.removeItem('cb_admin_custom_pin');
+    setPasswordChangeMsg('✔ Reset to defaults: admin@2026 or 8802155810');
+    setTimeout(() => {
+      setPasswordChangeMsg('');
+      setIsChangingPassword(false);
+    }, 2500);
+  };
+
   const handleLock = () => {
     sessionStorage.removeItem('cb_admin_authenticated');
     setIsAuthenticated(false);
+    setIsChangingPassword(false);
     setLeads([]);
     setPasscode('');
     setAuthError('');
@@ -350,7 +387,25 @@ export default function LeadAdminDrawer({ isOpen, onClose }) {
                 </p>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => setIsChangingPassword(!isChangingPassword)}
+                  style={{
+                    padding: '0.45rem 0.75rem',
+                    borderRadius: '8px',
+                    backgroundColor: isChangingPassword ? '#2563eb' : 'rgba(255, 255, 255, 0.1)',
+                    color: '#ffffff',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    fontSize: '0.78rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                  }}
+                  title="Change Admin Passcode"
+                >
+                  <KeyRound size={13} /> Change Password
+                </button>
                 <button
                   onClick={handleExportCSV}
                   className="btn btn-gold"
@@ -392,6 +447,81 @@ export default function LeadAdminDrawer({ isOpen, onClose }) {
                 </button>
               </div>
             </div>
+
+            {/* Change Password Panel (When toggled) */}
+            {isChangingPassword && (
+              <div
+                style={{
+                  backgroundColor: '#1e293b',
+                  color: '#ffffff',
+                  padding: '1rem 1.5rem',
+                  borderBottom: '1px solid #334155',
+                  animation: 'fadeIn 0.2s ease-out',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.9rem', fontWeight: 700 }}>
+                    <KeyRound size={16} color="#f59e0b" />
+                    <span>Set Custom Admin Password</span>
+                  </div>
+                  <button
+                    onClick={() => setIsChangingPassword(false)}
+                    style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '0.75rem' }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+                <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: '0 0 0.75rem 0' }}>
+                  Set a new passcode to secure this CRM. The default passwords (<code>admin@2026</code> / <code>8802155810</code>) will remain as fallbacks unless changed in code.
+                </p>
+                <form onSubmit={handleSaveNewPassword} style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                  <input
+                    type="text"
+                    value={newPassInput}
+                    onChange={(e) => setNewPassInput(e.target.value)}
+                    placeholder="Enter new admin passcode (min 4 chars)"
+                    style={{
+                      flex: 1,
+                      minWidth: '220px',
+                      padding: '0.5rem 0.75rem',
+                      borderRadius: '8px',
+                      border: '1px solid #475569',
+                      backgroundColor: '#0f172a',
+                      color: '#ffffff',
+                      fontSize: '0.85rem',
+                      outline: 'none',
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    style={{ padding: '0.5rem 1rem', fontSize: '0.82rem', borderRadius: '8px' }}
+                  >
+                    Save New Password
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleResetPassword}
+                    style={{
+                      padding: '0.5rem 0.75rem',
+                      fontSize: '0.78rem',
+                      backgroundColor: 'transparent',
+                      color: '#94a3b8',
+                      border: '1px solid #475569',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Reset to Default
+                  </button>
+                </form>
+                {passwordChangeMsg && (
+                  <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: passwordChangeMsg.startsWith('Error') ? '#f87171' : '#4ade80', fontWeight: 600 }}>
+                    {passwordChangeMsg}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Search & Actions Bar */}
             <div
