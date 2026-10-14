@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Phone, CheckCircle2, Send, ShieldCheck, Sparkles, MessageCircle } from 'lucide-react';
+import { Phone, CheckCircle2, Send, ShieldCheck, Sparkles, MessageCircle, Loader2, Database } from 'lucide-react';
+import { saveLead } from '../lib/supabaseClient';
 
 export default function LeadFormSection({ onLeadCaptured }) {
   const [formData, setFormData] = useState({
@@ -11,6 +12,9 @@ export default function LeadFormSection({ onLeadCaptured }) {
     budget: '₹2 Lakhs - ₹5 Lakhs',
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSavedToBackend, setIsSavedToBackend] = useState(false);
+  const [generatedRefId, setGeneratedRefId] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
   const handleChange = (e) => {
@@ -18,7 +22,7 @@ export default function LeadFormSection({ onLeadCaptured }) {
     if (errorMsg) setErrorMsg('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.fullName.trim()) {
       setErrorMsg('Please enter your full name.');
@@ -30,8 +34,13 @@ export default function LeadFormSection({ onLeadCaptured }) {
       return;
     }
 
+    setIsSubmitting(true);
+    const newRefId = 'CB-' + Math.floor(100000 + Math.random() * 900000);
+    setGeneratedRefId(newRefId);
+
     const newLead = {
-      id: 'CB-' + Math.floor(100000 + Math.random() * 900000),
+      id: newRefId,
+      reference_id: newRefId,
       ...formData,
       source: 'In-Page Form Section',
       date: new Date().toLocaleString(),
@@ -39,12 +48,13 @@ export default function LeadFormSection({ onLeadCaptured }) {
     };
 
     try {
-      const existingLeads = JSON.parse(localStorage.getItem('collegebundle_leads') || '[]');
-      existingLeads.unshift(newLead);
-      localStorage.setItem('collegebundle_leads', JSON.stringify(existingLeads));
+      const result = await saveLead(newLead);
+      setIsSavedToBackend(result.remoteSuccess);
       if (onLeadCaptured) onLeadCaptured(newLead);
     } catch (err) {
-      console.error(err);
+      console.error('Lead submission error:', err);
+    } finally {
+      setIsSubmitting(false);
     }
 
     setSubmitted(true);
@@ -213,11 +223,20 @@ export default function LeadFormSection({ onLeadCaptured }) {
                 >
                   <CheckCircle2 size={36} />
                 </div>
-                <h3 style={{ fontSize: '1.4rem', color: '#0f172a', marginBottom: '0.5rem' }}>
+                <h3 style={{ fontSize: '1.4rem', color: '#0f172a', marginBottom: '0.35rem' }}>
                   Request Registered!
                 </h3>
-                <p style={{ color: '#475569', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-                  Thank you, <strong>{formData.fullName}</strong>. A dedicated counselor will call you on <strong>{formData.mobile}</strong> shortly to share college options and cutoff analysis.
+                <p style={{ color: '#475569', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+                  Thank you, <strong>{formData.fullName}</strong>. Reference ID: <strong style={{ color: '#1d4ed8' }}>{generatedRefId}</strong>
+                </p>
+                {isSavedToBackend && (
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', backgroundColor: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 600, marginBottom: '1.25rem' }}>
+                    <Database size={13} />
+                    <span>Saved in Supabase Backend</span>
+                  </div>
+                )}
+                <p style={{ color: '#64748b', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
+                  A dedicated counselor will call you on <strong>{formData.mobile}</strong> shortly to share college options and cutoff analysis.
                 </p>
                 <a href="tel:8802155810" className="btn btn-call" style={{ width: '100%' }}>
                   <Phone size={16} /> Need Faster Answer? Call 8802155810
@@ -342,10 +361,31 @@ export default function LeadFormSection({ onLeadCaptured }) {
                 <button
                   type="submit"
                   className="btn btn-primary"
-                  style={{ width: '100%', padding: '0.85rem', fontSize: '0.95rem', borderRadius: '10px' }}
+                  disabled={isSubmitting}
+                  style={{
+                    width: '100%',
+                    padding: '0.85rem',
+                    fontSize: '0.95rem',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    opacity: isSubmitting ? 0.75 : 1,
+                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  }}
                 >
-                  <Send size={16} />
-                  <span>Get Free Counseling & Callback</span>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
+                      <span>Saving Inquiry to Backend...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send size={16} />
+                      <span>Get Free Counseling & Callback</span>
+                    </>
+                  )}
                 </button>
               </form>
             )}

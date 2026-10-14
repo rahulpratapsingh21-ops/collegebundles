@@ -1,50 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { X, Download, Phone, Mail, User, Trash2, CheckCircle, RefreshCw, FileSpreadsheet } from 'lucide-react';
+import { X, Download, Phone, Mail, User, Trash2, CheckCircle, RefreshCw, FileSpreadsheet, Database, Loader2 } from 'lucide-react';
+import { fetchLeads, updateLeadStatus, deleteLead } from '../lib/supabaseClient';
 
 export default function LeadAdminDrawer({ isOpen, onClose }) {
   const [leads, setLeads] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [dataSource, setDataSource] = useState('supabase');
 
-  const loadLeads = () => {
+  const loadLeads = async () => {
+    setIsRefreshing(true);
     try {
-      const stored = JSON.parse(localStorage.getItem('collegebundle_leads') || '[]');
-      if (stored.length === 0) {
-        // Seed initial sample leads for demo
-        const demoLeads = [
-          {
-            id: 'CB-882194',
-            fullName: 'Amit Kumar',
-            mobile: '9871234560',
-            email: 'amit.k@gmail.com',
-            stream: 'Management (MBA/PGDM)',
-            city: 'Delhi NCR',
-            budget: '₹2 Lakhs - ₹5 Lakhs',
-            query: 'Looking for Online MBA with Coursera certification',
-            source: 'Hero Primary CTA',
-            date: '13/10/2026, 04:30:12 pm',
-            status: 'New / Pending Call',
-          },
-          {
-            id: 'CB-449120',
-            fullName: 'Dr. Priya Sen',
-            mobile: '9811442200',
-            email: 'priya.sen@outlook.com',
-            stream: 'Medical (MBBS/BDS/AYUSH)',
-            city: 'Lucknow',
-            budget: 'Above ₹15 Lakhs',
-            query: 'NEET 530 marks private MBBS seat options',
-            source: 'Article Modal: NEET UG 2026',
-            date: '13/10/2026, 02:15:45 pm',
-            status: 'Called / In Counseling',
-          },
-        ];
-        localStorage.setItem('collegebundle_leads', JSON.stringify(demoLeads));
-        setLeads(demoLeads);
-      } else {
-        setLeads(stored);
-      }
+      const result = await fetchLeads();
+      setLeads(result.leads || []);
+      setDataSource(result.source || 'supabase');
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching leads from Supabase:', err);
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -56,17 +29,25 @@ export default function LeadAdminDrawer({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  const handleUpdateStatus = (id, newStatus) => {
-    const updated = leads.map((l) => (l.id === id ? { ...l, status: newStatus } : l));
+  const handleUpdateStatus = async (id, newStatus) => {
+    const updated = leads.map((l) => (l.id === id || l.supabase_id === id ? { ...l, status: newStatus } : l));
     setLeads(updated);
-    localStorage.setItem('collegebundle_leads', JSON.stringify(updated));
+    try {
+      await updateLeadStatus(id, newStatus);
+    } catch (err) {
+      console.error('Error updating status in Supabase:', err);
+    }
   };
 
-  const handleDeleteLead = (id) => {
-    if (confirm('Delete this lead record?')) {
-      const updated = leads.filter((l) => l.id !== id);
+  const handleDeleteLead = async (id) => {
+    if (confirm('Delete this lead record permanently from Supabase?')) {
+      const updated = leads.filter((l) => l.id !== id && l.supabase_id !== id);
       setLeads(updated);
-      localStorage.setItem('collegebundle_leads', JSON.stringify(updated));
+      try {
+        await deleteLead(id);
+      } catch (err) {
+        console.error('Error deleting lead from Supabase:', err);
+      }
     }
   };
 
@@ -124,7 +105,7 @@ export default function LeadAdminDrawer({ isOpen, onClose }) {
           }}
         >
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
               <h3 style={{ fontSize: '1.25rem', color: '#ffffff', margin: 0 }}>
                 CollegeBundle Lead Manager (Admin CRM)
               </h3>
@@ -138,7 +119,23 @@ export default function LeadAdminDrawer({ isOpen, onClose }) {
                   borderRadius: '999px',
                 }}
               >
-                {leads.length} Leads Stored
+                {leads.length} Leads
+              </span>
+              <span
+                style={{
+                  backgroundColor: dataSource === 'supabase' ? '#065f46' : '#92400e',
+                  color: '#ffffff',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  padding: '0.15rem 0.55rem',
+                  borderRadius: '999px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.3rem',
+                }}
+              >
+                <Database size={11} />
+                {dataSource === 'supabase' ? 'Supabase Live DB' : 'Local Cache'}
               </span>
             </div>
             <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: 0 }}>
@@ -199,6 +196,7 @@ export default function LeadAdminDrawer({ isOpen, onClose }) {
 
           <button
             onClick={loadLeads}
+            disabled={isRefreshing}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -206,10 +204,22 @@ export default function LeadAdminDrawer({ isOpen, onClose }) {
               fontSize: '0.8rem',
               color: '#1d4ed8',
               fontWeight: 600,
-              cursor: 'pointer',
+              cursor: isRefreshing ? 'not-allowed' : 'pointer',
+              background: 'none',
+              border: 'none',
             }}
           >
-            <RefreshCw size={14} /> Refresh Leads
+            {isRefreshing ? (
+              <>
+                <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} />
+                <span>Syncing Supabase...</span>
+              </>
+            ) : (
+              <>
+                <RefreshCw size={14} />
+                <span>Refresh Leads</span>
+              </>
+            )}
           </button>
         </div>
 

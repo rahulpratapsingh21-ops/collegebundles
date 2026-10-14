@@ -1,16 +1,26 @@
 import React, { useState } from 'react';
 import Logo from './Logo';
-import { Phone, Mail, MapPin, MessageCircle, Sparkles, Send, ShieldCheck, Heart } from 'lucide-react';
+import { Phone, Mail, MapPin, MessageCircle, Sparkles, Send, ShieldCheck, Heart, Loader2 } from 'lucide-react';
+import { subscribeNewsletter } from '../lib/supabaseClient';
 
 export default function Footer({ onSelectCategory, onOpenLeadModal, onOpenAICounselor, onOpenAdminDrawer }) {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [isSubscribing, setIsSubscribing] = useState(false);
 
-  const handleSubscribe = (e) => {
+  const handleSubscribe = async (e) => {
     e.preventDefault();
     if (newsletterEmail.includes('@')) {
-      setSubscribed(true);
-      setNewsletterEmail('');
+      setIsSubscribing(true);
+      try {
+        await subscribeNewsletter(newsletterEmail, 'Website Footer Newsletter');
+      } catch (err) {
+        console.error('Newsletter subscribe error:', err);
+      } finally {
+        setIsSubscribing(false);
+        setSubscribed(true);
+        setNewsletterEmail('');
+      }
     }
   };
 
@@ -68,8 +78,17 @@ export default function Footer({ onSelectCategory, onOpenLeadModal, onOpenAICoun
                   }}
                   required
                 />
-                <button type="submit" className="btn btn-primary" style={{ padding: '0.75rem 1.25rem' }}>
-                  <Send size={16} />
+                <button 
+                  type="submit" 
+                  className="btn btn-primary" 
+                  disabled={isSubscribing}
+                  style={{ padding: '0.75rem 1.25rem', opacity: isSubscribing ? 0.75 : 1, cursor: isSubscribing ? 'not-allowed' : 'pointer' }}
+                >
+                  {isSubscribing ? (
+                    <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
+                  ) : (
+                    <Send size={16} />
+                  )}
                 </button>
               </form>
             )}

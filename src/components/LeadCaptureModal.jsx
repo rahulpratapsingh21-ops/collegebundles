@@ -8,8 +8,11 @@ import {
   Award, 
   Sparkles, 
   MessageCircle,
-  FileText 
+  FileText,
+  Loader2,
+  Database
 } from 'lucide-react';
+import { saveLead } from '../lib/supabaseClient';
 
 export default function LeadCaptureModal({ source = 'General Inquiry', onClose, onLeadCaptured }) {
   const [formData, setFormData] = useState({
@@ -23,6 +26,8 @@ export default function LeadCaptureModal({ source = 'General Inquiry', onClose, 
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSavedToBackend, setIsSavedToBackend] = useState(false);
   const [leadId, setLeadId] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -34,7 +39,7 @@ export default function LeadCaptureModal({ source = 'General Inquiry', onClose, 
     if (errorMsg) setErrorMsg('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validation
@@ -52,23 +57,25 @@ export default function LeadCaptureModal({ source = 'General Inquiry', onClose, 
       return;
     }
 
+    setIsSubmitting(true);
     const generatedId = 'CB-' + Math.floor(100000 + Math.random() * 900000);
     const newLead = {
       id: generatedId,
+      reference_id: generatedId,
       ...formData,
       source,
       date: new Date().toLocaleString(),
       status: 'New / Pending Call',
     };
 
-    // Save to LocalStorage
     try {
-      const existingLeads = JSON.parse(localStorage.getItem('collegebundle_leads') || '[]');
-      existingLeads.unshift(newLead);
-      localStorage.setItem('collegebundle_leads', JSON.stringify(existingLeads));
+      const result = await saveLead(newLead);
+      setIsSavedToBackend(result.remoteSuccess);
       if (onLeadCaptured) onLeadCaptured(newLead);
     } catch (err) {
       console.error('Lead storage error', err);
+    } finally {
+      setIsSubmitting(false);
     }
 
     setLeadId(generatedId);
@@ -156,10 +163,16 @@ export default function LeadCaptureModal({ source = 'General Inquiry', onClose, 
               <h3 style={{ fontSize: '1.5rem', color: '#0f172a', marginBottom: '0.5rem' }}>
                 Application Received!
               </h3>
-              <p style={{ color: '#475569', fontSize: '0.95rem', marginBottom: '1rem' }}>
+              <p style={{ color: '#475569', fontSize: '0.95rem', marginBottom: '0.5rem' }}>
                 Thank you, <strong>{formData.fullName}</strong>. Your inquiry reference is{' '}
                 <strong style={{ color: '#1d4ed8' }}>{leadId}</strong>.
               </p>
+              {isSavedToBackend && (
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', backgroundColor: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 600, marginBottom: '1rem' }}>
+                  <Database size={13} />
+                  <span>Verified & Saved in Supabase Backend</span>
+                </div>
+              )}
               <p style={{ color: '#64748b', fontSize: '0.85rem', maxWidth: '450px', margin: '0 auto 1.5rem auto' }}>
                 Our Senior Admission Counselor for <strong>{formData.stream}</strong> will call you at{' '}
                 <strong>{formData.mobile}</strong> within 15 minutes to share college cutoffs, fee structures, and scholarship options.
@@ -407,15 +420,31 @@ export default function LeadCaptureModal({ source = 'General Inquiry', onClose, 
               <button
                 type="submit"
                 className="btn btn-primary"
+                disabled={isSubmitting}
                 style={{
                   width: '100%',
                   padding: '0.85rem',
                   fontSize: '1rem',
                   borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  opacity: isSubmitting ? 0.75 : 1,
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
                 }}
               >
-                <Send size={18} />
-                <span>Submit & Connect with Counselor (8802155810)</span>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} />
+                    <span>Saving to Database & Connecting Counselor...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send size={18} />
+                    <span>Submit & Connect with Counselor (8802155810)</span>
+                  </>
+                )}
               </button>
             </form>
           )}
