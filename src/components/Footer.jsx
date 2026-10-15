@@ -1,368 +1,276 @@
-import React, { useState } from 'react';
+import React from 'react';
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Lock,
+  ShieldCheck,
+  Cpu,
+  ArrowUp,
+  CheckCircle2,
+  Sparkles,
+} from 'lucide-react';
 import Logo from './Logo';
-import { Phone, Mail, MapPin, MessageCircle, Sparkles, Send, ShieldCheck, Heart, Loader2, Lock } from 'lucide-react';
-import { subscribeNewsletter } from '../lib/supabaseClient';
 
-export default function Footer({ onSelectCategory, onOpenLeadModal, onOpenAICounselor, onOpenAdminDrawer }) {
-  const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-  const [isSubscribing, setIsSubscribing] = useState(false);
+export default function Footer({ onOpenAdminModal, onOpenAuditModal, hasAdmin }) {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-  const handleSubscribe = async (e) => {
-    e.preventDefault();
-    if (newsletterEmail.includes('@')) {
-      setIsSubscribing(true);
-      try {
-        await subscribeNewsletter(newsletterEmail, 'Website Footer Newsletter');
-      } catch (err) {
-        console.error('Newsletter subscribe error:', err);
-      } finally {
-        setIsSubscribing(false);
-        setSubscribed(true);
-        setNewsletterEmail('');
-      }
-    }
+  const scrollTo = (id) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <footer style={{ backgroundColor: '#09101d', color: '#f8fafc', paddingTop: '4rem', paddingBottom: '3rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
-      <div className="container">
-        {/* Top Newsletter & Advisory Banner */}
-        <div
-          style={{
-            backgroundColor: 'rgba(30, 41, 59, 0.7)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: '20px',
-            padding: '2rem',
-            marginBottom: '3.5rem',
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1.5rem',
-          }}
-        >
-          <div style={{ maxWidth: '520px' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Stay Ahead of Admission Cutoffs
-            </span>
-            <h3 style={{ fontSize: '1.4rem', color: '#ffffff', margin: '0.35rem 0' }}>
-              Subscribe to CollegeBundle Admission Alerts
-            </h3>
-            <p style={{ fontSize: '0.875rem', color: '#94a3b8', margin: 0 }}>
-              Receive instant SMS/email alerts on NEET state seat matrix, JoSAA rounds, and online degree scholarship windows.
+    <footer className="bg-[#081120] text-slate-300 border-t border-slate-800 pt-16 pb-12">
+      <div className="abs-container">
+        
+        {/* Main Footer Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-slate-800">
+          
+          {/* Brand & Corporate Overview (Col 4) */}
+          <div className="lg:col-span-4 space-y-4">
+            <div onClick={scrollToTop}>
+              <Logo variant="white" />
+            </div>
+            
+            <p className="text-xs text-slate-400 leading-relaxed font-['Plus_Jakarta_Sans']">
+              ABS Digital Solutions is a premier digital engineering agency headquartered in Sector 22, Noida. We specialize in certified WCAG 2.1/2.2 AA &amp; AAA accessibility auditing, accessible eLearning content, PDF/UA remediation, and next-generation AI Search Optimization (LLMO, GEO, AEO, HEO).
             </p>
+
+            <div className="pt-2 flex items-center gap-3 text-xs text-slate-400">
+              <span className="flex items-center gap-1 text-emerald-400 font-semibold">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>WCAG 2.2 Compliant</span>
+              </span>
+              <span className="text-slate-600">•</span>
+              <span className="flex items-center gap-1 text-[#06b6d4] font-semibold">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>AI Search Engine Ready</span>
+              </span>
+            </div>
           </div>
 
-          <div style={{ flex: 1, minWidth: 'min(100%, 280px)', maxWidth: '420px', width: '100%' }}>
-            {subscribed ? (
-              <div style={{ backgroundColor: '#064e3b', color: '#6ee7b7', padding: '0.75rem 1rem', borderRadius: '10px', fontSize: '0.85rem', fontWeight: 600 }}>
-                ✔ Thank you for subscribing! You will receive verified news bulletins.
-              </div>
-            ) : (
-              <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: '0.5rem', width: '100%' }}>
-                <input
-                  type="email"
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  placeholder="Enter your email address"
-                  style={{
-                    flex: 1,
-                    minWidth: 0,
-                    padding: '0.75rem 1rem',
-                    borderRadius: '10px',
-                    border: '1px solid #334155',
-                    backgroundColor: '#0f172a',
-                    color: '#ffffff',
-                    fontSize: '0.85rem',
-                    outline: 'none',
-                  }}
-                  required
-                />
-                <button 
-                  type="submit" 
-                  className="btn btn-primary" 
-                  disabled={isSubscribing}
-                  style={{ padding: '0.75rem 1.25rem', opacity: isSubscribing ? 0.75 : 1, cursor: isSubscribing ? 'not-allowed' : 'pointer', flexShrink: 0 }}
+          {/* Quick Links: Digital Accessibility (Col 3) */}
+          <div className="lg:col-span-3 space-y-3">
+            <h4 className="text-sm font-bold text-white uppercase tracking-wider font-['Outfit'] flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-[#0c5adb]" />
+              <span>Accessibility Solutions</span>
+            </h4>
+            <ul className="space-y-2.5 text-xs">
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('accessibility-solutions')}
+                  className="footer-link"
                 >
-                  {isSubscribing ? (
-                    <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
-                  ) : (
-                    <Send size={16} />
-                  )}
+                  WCAG Accessibility Testing &amp; Auditing
                 </button>
-              </form>
-            )}
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('accessibility-solutions')}
+                  className="footer-link"
+                >
+                  Accessible eLearning Content (SCORM)
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('accessibility-solutions')}
+                  className="footer-link"
+                >
+                  Document Accessibility &amp; PDF Remediation
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('accessibility-solutions')}
+                  className="footer-link"
+                >
+                  Learning Management Systems (LMS)
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('accessibility-solutions')}
+                  className="footer-link"
+                >
+                  Interactive &amp; Inclusive Digital Content
+                </button>
+              </li>
+            </ul>
           </div>
-        </div>
 
-        {/* 4 Columns Links */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '2.5rem',
-            marginBottom: '3.5rem',
-          }}
-        >
-          {/* Column 1: Brand Info & Direct Hotline */}
-          <div>
-            <div style={{ marginBottom: '1.25rem' }}>
-              <Logo size="normal" inverted={true} />
+          {/* Quick Links: AI SEO & Web (Col 2) */}
+          <div className="lg:col-span-2 space-y-3">
+            <h4 className="text-sm font-bold text-white uppercase tracking-wider font-['Outfit'] flex items-center gap-2">
+              <Cpu className="w-4 h-4 text-[#06b6d4]" />
+              <span>Next-Gen SEO</span>
+            </h4>
+            <ul className="space-y-2.5 text-xs">
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('ai-seo-services')}
+                  className="footer-link"
+                >
+                  LLMO Services (ChatGPT / Claude)
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('ai-seo-services')}
+                  className="footer-link"
+                >
+                  AI Search Optimization (AI SEO)
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('ai-seo-services')}
+                  className="footer-link"
+                >
+                  Generative Engine Optimization (GEO)
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('ai-seo-services')}
+                  className="footer-link"
+                >
+                  Answer Engine Optimization (AEO)
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('ai-seo-services')}
+                  className="footer-link"
+                >
+                  Hybrid Engine Optimization (HEO)
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('ai-seo-services')}
+                  className="footer-link"
+                >
+                  AI Brand Visibility
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('client-testimonials')}
+                  className="footer-link"
+                  style={{ color: '#fbbf24', fontWeight: 700 }}
+                >
+                  ★ Client Testimonials
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('insights-blog')}
+                  className="footer-link"
+                  style={{ color: '#38bdf8', fontWeight: 600 }}
+                >
+                  What to Read Next (Guides)
+                </button>
+              </li>
+            </ul>
+          </div>
+
+
+          {/* Contact Details Column (Col 3) */}
+          <div className="lg:col-span-3 space-y-3">
+            <h4 className="text-sm font-bold text-white uppercase tracking-wider font-['Outfit']">
+              Noida Headquarters
+            </h4>
+            
+            <div className="space-y-2.5 text-xs text-slate-300">
+              <div className="flex items-start gap-2">
+                <MapPin className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <span>Sector 22, Noida, Uttar Pradesh - 201301</span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-[#06b6d4] shrink-0" />
+                <a
+                  href="tel:+919286185258"
+                  className="text-white hover:text-[#06b6d4] font-mono font-semibold"
+                >
+                  +91 9286185258
+                </a>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-[#0c5adb] shrink-0" />
+                <a
+                  href="mailto:rahul.singh@absdigitalsolution.com"
+                  className="text-slate-300 hover:text-white break-all"
+                >
+                  rahul.singh@absdigitalsolution.com
+                </a>
+              </div>
             </div>
 
-            <p style={{ fontSize: '0.875rem', color: '#94a3b8', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-              CollegeBundles.in is India’s foremost educational news and admission counseling network. Covering Medical, Engineering, Management, and UGC-DEB entitled Online Degrees.
-            </p>
+            <div className="pt-2">
+              <button
+                onClick={onOpenAuditModal}
+                className="w-full btn-orange text-xs py-2.5 px-4 font-bold rounded-lg shadow-md"
+              >
+                Request Free 24h Audit
+              </button>
+            </div>
+          </div>
 
-            {/* Helpline Card */}
-            <div
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                padding: '1rem',
-                borderRadius: '12px',
-              }}
+        </div>
+
+        {/* Bottom Utility Bar: Copyright & EXCLUSIVE Admin Sign-Up / Login Link */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+          <div>
+            &copy; {new Date().getFullYear()} ABS Digital Solutions. All Rights Reserved. Sector 22, Noida, UP 201301.
+          </div>
+
+          {/* STRICT USER REQUIREMENT: Admin link ONLY in website footer! */}
+          <div className="flex items-center gap-6">
+            <button
+              onClick={scrollToTop}
+              className="flex items-center gap-1 hover:text-white transition-colors"
             >
-              <div style={{ fontSize: '0.75rem', color: '#6ee7b7', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.25rem' }}>
-                Admission Hotline 2026
-              </div>
-              <a
-                href="tel:8802155810"
-                style={{
-                  fontSize: '1.35rem',
-                  fontWeight: 800,
-                  color: '#ffffff',
-                  textDecoration: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                }}
-              >
-                <Phone size={18} color="#10b981" />
-                <span>8802155810</span>
-              </a>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.35rem' }}>
-                Free Student & Parent Advisory Desk
-              </div>
-            </div>
-          </div>
+              <span>Back to Top</span>
+              <ArrowUp className="w-3.5 h-3.5" />
+            </button>
 
-          {/* Column 2: Medical & Healthcare News */}
-          <div>
-            <h4 style={{ fontSize: '1rem', color: '#ffffff', marginBottom: '1rem', borderBottom: '2px solid #15803d', paddingBottom: '0.4rem', display: 'inline-block' }}>
-              Medical (NEET / MBBS)
-            </h4>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.875rem', color: '#cbd5e1' }}>
-              <li>
-                <a
-                  href="#news-section"
-                  onClick={() => onSelectCategory('medical')}
-                  style={{ color: '#cbd5e1', transition: 'color 0.2s' }}
-                >
-                  NEET UG 2026 Cutoffs & Ranks
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#news-section"
-                  onClick={() => onSelectCategory('medical')}
-                  style={{ color: '#cbd5e1' }}
-                >
-                  NMC State Quota Seat Matrix
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#news-section"
-                  onClick={() => onSelectCategory('medical')}
-                  style={{ color: '#cbd5e1' }}
-                >
-                  AIIMS & Govt Medical Colleges
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#news-section"
-                  onClick={() => onSelectCategory('medical')}
-                  style={{ color: '#cbd5e1' }}
-                >
-                  Private MBBS Low Fee Packages
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#news-section"
-                  onClick={() => onSelectCategory('medical')}
-                  style={{ color: '#cbd5e1' }}
-                >
-                  BDS, BAMS & AYUSH Counselling
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 3: Engineering & Management */}
-          <div>
-            <h4 style={{ fontSize: '1rem', color: '#ffffff', marginBottom: '1rem', borderBottom: '2px solid #0284c7', paddingBottom: '0.4rem', display: 'inline-block' }}>
-              Engineering & Management
-            </h4>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.875rem', color: '#cbd5e1' }}>
-              <li>
-                <a
-                  href="#news-section"
-                  onClick={() => onSelectCategory('engineering')}
-                  style={{ color: '#cbd5e1' }}
-                >
-                  JEE Main 2026 JoSAA Matrix
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#news-section"
-                  onClick={() => onSelectCategory('engineering')}
-                  style={{ color: '#cbd5e1' }}
-                >
-                  B.Tech in Artificial Intelligence
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#news-section"
-                  onClick={() => onSelectCategory('engineering')}
-                  style={{ color: '#cbd5e1' }}
-                >
-                  Top IITs, NITs & IIITs Cutoffs
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#news-section"
-                  onClick={() => onSelectCategory('management')}
-                  style={{ color: '#cbd5e1' }}
-                >
-                  CAT Percentile vs IIM Calls
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#news-section"
-                  onClick={() => onSelectCategory('management')}
-                  style={{ color: '#cbd5e1' }}
-                >
-                  Top 50 Non-IIM Business Schools
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 4: Online & Quick Tools */}
-          <div>
-            <h4 style={{ fontSize: '1rem', color: '#ffffff', marginBottom: '1rem', borderBottom: '2px solid #7e22ce', paddingBottom: '0.4rem', display: 'inline-block' }}>
-              Online
-            </h4>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.875rem', color: '#cbd5e1' }}>
-              <li>
-                <a
-                  href="#online-guide-section"
-                  style={{ color: '#cbd5e1' }}
-                >
-                  UGC-DEB Entitlement Register
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#news-section"
-                  onClick={() => onSelectCategory('online')}
-                  style={{ color: '#cbd5e1' }}
-                >
-                  Online MBA Specializations
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#news-section"
-                  onClick={() => onSelectCategory('online')}
-                  style={{ color: '#cbd5e1' }}
-                >
-                  Online MCA & BCA Degrees
-                </a>
-              </li>
-              <li>
-                <button
-                  onClick={onOpenAICounselor}
-                  style={{
-                    color: '#c4b5fd',
-                    fontWeight: 700,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.35rem',
-                  }}
-                >
-                  <Sparkles size={14} /> AI College Predictor
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onOpenLeadModal('Footer Counselor Link')}
-                  style={{ color: '#f59e0b', fontWeight: 700 }}
-                >
-                  Request 50% Scholarship
-                </button>
-              </li>
-            </ul>
+            {/* The ONLY Admin Portal Link */}
+            <button
+              id="footer-admin-link"
+              onClick={onOpenAdminModal}
+              className="flex items-center gap-1.5 text-slate-400 hover:text-amber-400 transition-colors p-1.5 rounded-lg border border-slate-800 hover:border-slate-700 bg-slate-900/60"
+              title="Admin Access - Leads Management"
+            >
+              <Lock className="w-3.5 h-3.5 text-[#06b6d4]" />
+              <span className="font-semibold text-slate-300 hover:text-white">Admin Portal</span>
+              {!hasAdmin && (
+                <span className="text-[10px] bg-[#06b6d4] text-white px-1.5 py-0.5 rounded font-extrabold uppercase animate-pulse">
+                  1-Time Setup
+                </span>
+              )}
+            </button>
           </div>
         </div>
 
-        {/* Bottom Disclaimers & Copyright */}
-        <div
-          style={{
-            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-            paddingTop: '2rem',
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1rem',
-            fontSize: '0.8rem',
-            color: '#64748b',
-          }}
-        >
-          <div>
-            © {new Date().getFullYear()} <strong>CollegeBundles.in</strong>. All Rights Reserved. Empowering education seekers across India.
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
-            <span>Helpline: <strong>8802155810</strong></span>
-            <span>UGC-DEB & AICTE Information Portal</span>
-            <span>Privacy Policy</span>
-            <span>Terms of Advisory</span>
-            {onOpenAdminDrawer && (
-              <a
-                href="#admin"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onOpenAdminDrawer();
-                }}
-                style={{
-                  color: '#64748b',
-                  fontSize: '0.75rem',
-                  textDecoration: 'none',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.25rem',
-                  cursor: 'pointer',
-                  transition: 'color 0.2s',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#38bdf8')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = '#64748b')}
-                title="Admin Panel (Passcode Protected)"
-              >
-                <Lock size={12} /> Admin Panel
-              </a>
-            )}
-          </div>
-        </div>
       </div>
     </footer>
   );

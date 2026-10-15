@@ -14,6 +14,7 @@ dist-ssr
 *.zip
 .env
 .env.*
+absdigital/
 !.env.example
 
 # Editor directories and files

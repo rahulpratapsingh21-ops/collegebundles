@@ -1,138 +1,85 @@
 import React, { useState } from 'react';
-import { MessageCircle, X } from 'lucide-react';
+import { X } from 'lucide-react';
 
 export default function FloatingWhatsApp() {
   const [showTooltip, setShowTooltip] = useState(true);
 
+  const phoneNumber = '919286185258';
+  // Removed website name as requested by user
+  const defaultMessage = encodeURIComponent(
+    'Hello Rahul, I would like to inquire about your Accessibility and AI SEO services.'
+  );
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
+
   return (
-    <div
-      style={{
-        position: 'fixed',
-        right: '20px',
-        bottom: '80px',
-        zIndex: 998,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-end',
-        gap: '8px',
-      }}
-      className="floating-whatsapp-container"
-    >
-      {/* Speech Bubble / Tooltip */}
+    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end">
+      {/* Interactive Tooltip Card */}
       {showTooltip && (
         <div
-          style={{
-            backgroundColor: '#ffffff',
-            borderRadius: '14px',
-            padding: '0.65rem 0.9rem',
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
-            border: '1px solid #e2e8f0',
-            maxWidth: '220px',
-            fontSize: '0.8125rem',
-            color: '#1e293b',
-            position: 'relative',
-            animation: 'fadeIn 0.3s ease-out',
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '8px',
-          }}
+          className="mb-2 bg-white text-slate-900 text-xs rounded-xl shadow-2xl p-3 border border-slate-200 animate-fade-in relative"
+          style={{ maxWidth: '240px' }}
         >
-          <div>
-            <div style={{ fontWeight: 700, color: '#0f172a', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#22c55e', display: 'inline-block' }} />
-              <span>WhatsApp Helpline</span>
-            </div>
-            <div style={{ color: '#475569', fontSize: '0.75rem', lineHeight: 1.35 }}>
-              Chat directly at <strong style={{ color: '#15803d' }}>8802155810</strong> for instant brochure & cutoffs!
-            </div>
-          </div>
           <button
             onClick={() => setShowTooltip(false)}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#94a3b8',
-              cursor: 'pointer',
-              padding: '2px',
-              display: 'flex',
-              alignItems: 'center',
-            }}
-            title="Dismiss"
+            className="absolute top-1.5 right-1.5 text-slate-400 hover:text-slate-600 p-0.5"
+            aria-label="Close tooltip"
           >
-            <X size={14} />
+            <X className="w-3.5 h-3.5" />
           </button>
-          {/* Arrow pointing down */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '-6px',
-              right: '24px',
-              width: '12px',
-              height: '12px',
-              backgroundColor: '#ffffff',
-              transform: 'rotate(45deg)',
-              borderRight: '1px solid #e2e8f0',
-              borderBottom: '1px solid #e2e8f0',
-            }}
-          />
+          <div className="flex items-center gap-1.5 font-bold text-slate-800 mb-0.5">
+            <span
+              style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                backgroundColor: '#25D366',
+                display: 'inline-block',
+              }}
+            ></span>
+            <span>Direct WhatsApp Help</span>
+          </div>
+          <p className="text-[11px] text-slate-600 leading-tight">
+            Chat directly with Rahul Singh.
+          </p>
+          <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+            <span>+91 9286185258</span>
+            <span className="text-emerald-600 font-bold" style={{ color: '#16a34a' }}>Online Now</span>
+          </div>
         </div>
       )}
 
-      {/* Main Floating Button */}
+      {/* Floating Button */}
       <a
-        href="https://wa.me/918802155810?text=Hi%20CollegeBundle,%20I%20am%20looking%20for%20admission%20guidance"
+        href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
+        aria-label="Chat directly on WhatsApp"
+        className="relative flex items-center justify-center w-14 h-14 rounded-full text-white shadow-2xl transition-all duration-300 hover:scale-110 border-2 border-white cursor-pointer"
         style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '8px',
-          backgroundColor: '#25d366',
-          color: '#ffffff',
-          padding: '0.75rem 1.15rem',
-          borderRadius: '999px',
-          boxShadow: '0 6px 20px rgba(37, 211, 102, 0.45)',
-          textDecoration: 'none',
-          fontWeight: 700,
-          fontSize: '0.9rem',
-          transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-          cursor: 'pointer',
+          background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
+          boxShadow: '0 8px 24px rgba(37, 211, 102, 0.45)',
         }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'scale(1.04) translateY(-2px)';
-          e.currentTarget.style.boxShadow = '0 10px 25px rgba(37, 211, 102, 0.55)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'scale(1) translateY(0)';
-          e.currentTarget.style.boxShadow = '0 6px 20px rgba(37, 211, 102, 0.45)';
-        }}
-        aria-label="Chat on WhatsApp 8802155810"
-        title="Chat on WhatsApp: 8802155810"
       >
-        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <MessageCircle size={22} fill="#ffffff" color="#25d366" />
-          <span
-            style={{
-              position: 'absolute',
-              top: '-2px',
-              right: '-2px',
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              backgroundColor: '#ffffff',
-            }}
-          />
-        </div>
-        <span className="wa-btn-text">WhatsApp 8802155810</span>
-      </a>
+        <svg
+          viewBox="0 0 24 24"
+          width="32"
+          height="32"
+          stroke="currentColor"
+          strokeWidth="2"
+          fill="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-white"
+        >
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+        </svg>
 
-      <style>{`
-        @media (max-width: 768px) {
-          .floating-whatsapp-container {
-            display: none !important;
-          }
-        }
-      `}</style>
+        {/* Pulsing indicator */}
+        <span className="absolute top-0 right-0 flex h-4 w-4">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-400 border-2 border-white"></span>
+        </span>
+      </a>
     </div>
   );
 }

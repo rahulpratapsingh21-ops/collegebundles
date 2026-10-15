@@ -1,396 +1,170 @@
 import React, { useState, useEffect } from 'react';
-import TopNotificationBar from './components/TopNotificationBar';
 import Navbar from './components/Navbar';
-import BreakingNewsTicker from './components/BreakingNewsTicker';
-import HeroSection from './components/HeroSection';
-import NewsSection from './components/NewsSection';
-import ArticleModal from './components/ArticleModal';
-import AICounselorModal from './components/AICounselorModal';
-import LeadCaptureModal from './components/LeadCaptureModal';
-import LeadFormSection from './components/LeadFormSection';
-import OnlineEducationGuide from './components/OnlineEducationGuide';
-import CollegeComparison from './components/CollegeComparison';
-import UniversitiesGrid from './components/UniversitiesGrid';
-import TrendingExamsAlert from './components/TrendingExamsAlert';
-import TestimonialsFAQ from './components/TestimonialsFAQ';
-import MobileBottomBar from './components/MobileBottomBar';
+import HeroBanner from './components/HeroBanner';
+import TrustedBrandsRating from './components/TrustedBrandsRating';
+import AccessibilitySolutions from './components/AccessibilitySolutions';
+import AiSeoServices from './components/AiSeoServices';
+import ClientTestimonials from './components/ClientTestimonials';
+import BlogSection from './components/BlogSection';
+import WhyChooseUs from './components/WhyChooseUs';
+import LeadSection from './components/LeadSection';
+import ScrollLeadPopup from './components/ScrollLeadPopup';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
-import LeadAdminDrawer from './components/LeadAdminDrawer';
 import Footer from './components/Footer';
-import { newsArticles } from './data/newsData';
+import AdminModal from './components/AdminModal';
+import AuditModal from './components/AuditModal';
+import { checkAdminExists } from './lib/supabaseClient';
+import { Phone, MessageSquare, CheckCircle2 } from 'lucide-react';
 
 export default function App() {
-  // Navigation & Filter State
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState('WCAG Accessibility Testing & Auditing');
+  const [hasAdmin, setHasAdmin] = useState(true);
+  const [toastNotification, setToastNotification] = useState(null);
 
-  // Modals State
-  const [selectedArticle, setSelectedArticle] = useState(null);
-  const [isAICounselorOpen, setIsAICounselorOpen] = useState(false);
-  const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
-  const [leadSource, setLeadSource] = useState('General');
-  const [isAdminDrawerOpen, setIsAdminDrawerOpen] = useState(false);
-
-  const [toastMessage, setToastMessage] = useState(null);
-  const [hasTriggeredScrollLead, setHasTriggeredScrollLead] = useState(false);
-  const [isMobilePreview, setIsMobilePreview] = useState(false);
-
-  // Check if mobile simulation mode is requested: ?view=mobile
+  // Initial check if admin exists for footer badge
   useEffect(() => {
-    if (window.location.search.includes('view=mobile')) {
-      setIsMobilePreview(true);
-    }
+    const verifyAdmin = async () => {
+      try {
+        const res = await checkAdminExists();
+        setHasAdmin(res.hasAdmin);
+      } catch (err) {
+        console.warn('Could not check admin status:', err);
+      }
+    };
+    verifyAdmin();
   }, []);
 
-  // 65% Scroll Lead Form Popup Trigger (Respects user dismissal in session)
-  useEffect(() => {
-    const handleScroll = () => {
-      if (hasTriggeredScrollLead) return;
-      if (sessionStorage.getItem('cb_popup_dismissed') === 'true') return;
-
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      if (scrollHeight <= 0) return;
-
-      const progress = (scrollTop / scrollHeight) * 100;
-      if (progress >= 65) {
-        setHasTriggeredScrollLead(true);
-        setLeadSource('65% Scroll Automatic Popup');
-        setIsLeadModalOpen(true);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [hasTriggeredScrollLead]);
-
-  // Secret Admin Portal triggers: #admin, ?admin=true, or Ctrl+Shift+A
-  useEffect(() => {
-    const checkAdminTrigger = () => {
-      if (window.location.hash === '#admin' || window.location.search.includes('admin=true')) {
-        setIsAdminDrawerOpen(true);
-      }
-    };
-    checkAdminTrigger();
-    window.addEventListener('hashchange', checkAdminTrigger);
-
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
-        e.preventDefault();
-        setIsAdminDrawerOpen((prev) => !prev);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('hashchange', checkAdminTrigger);
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
-
-  const showToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 4000);
-  };
-
-  const handleOpenLeadModal = (source = 'Inquiry') => {
-    setLeadSource(source);
-    setIsLeadModalOpen(true);
-  };
-
-  const handleCloseLeadModal = () => {
-    setIsLeadModalOpen(false);
-    sessionStorage.setItem('cb_popup_dismissed', 'true');
-    setHasTriggeredScrollLead(true);
-  };
-
-  const handleSelectArticleByTitle = (title) => {
-    const found = newsArticles.find((a) => a.title.toLowerCase().includes(title.toLowerCase().slice(0, 20)));
-    if (found) {
-      setSelectedArticle(found);
-    } else {
-      setSelectedArticle(newsArticles[0]);
+  const handleOpenAuditModal = (serviceName = null) => {
+    if (serviceName && typeof serviceName === 'string') {
+      setSelectedService(serviceName);
     }
+    setIsAuditModalOpen(true);
   };
 
-  const scrollToSection = (id) => {
-    const elem = document.getElementById(id);
-    if (elem) {
-      elem.scrollIntoView({ behavior: 'smooth' });
-    }
+  const handleLeadSuccess = (result) => {
+    setToastNotification(`Inquiry registered successfully! Reference ID: ${result.referenceId}`);
+    setTimeout(() => {
+      setToastNotification(null);
+    }, 6000);
   };
 
-  const appContent = (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* 1. Top Offer & Countdown Bar */}
-      <TopNotificationBar
-        onOpenLeadModal={handleOpenLeadModal}
-        onOpenAdminDrawer={() => setIsAdminDrawerOpen(true)}
-      />
+  return (
+    <div className="min-h-screen bg-[#f8fafc] text-[#0f172a] font-['Plus_Jakarta_Sans'] flex flex-col selection:bg-[#0c5adb] selection:text-white">
+      
+      {/* Toast Notification */}
+      {toastNotification && (
+        <div className="fixed top-20 right-4 z-50 bg-[#081120] text-white text-xs px-4 py-3 rounded-xl shadow-2xl border border-emerald-500 flex items-center gap-2.5 animate-fade-in">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>{toastNotification}</span>
+        </div>
+      )}
 
-      {/* 2. Main Navigation Bar with Logo, Phone 8802155810, Search, Categories */}
-      <Navbar
-        activeCategory={activeCategory}
-        onSelectCategory={setActiveCategory}
-        onOpenAICounselor={() => setIsAICounselorOpen(true)}
-        onOpenLeadModal={handleOpenLeadModal}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        onScrollToSection={scrollToSection}
-      />
+      {/* Main Navbar (Fixed and stands permanently at top) */}
+      <Navbar onOpenAuditModal={() => handleOpenAuditModal('General Consultation')} />
 
-      {/* 3. Real-Time Breaking News Ticker */}
-      <BreakingNewsTicker onSelectArticleByTitle={handleSelectArticleByTitle} />
+      {/* Fixed Navbar Spacer so content is never covered */}
+      <div style={{ height: '105px' }} className="hidden md:block w-full shrink-0" aria-hidden="true" />
+      <div style={{ height: '72px' }} className="md:hidden w-full shrink-0" aria-hidden="true" />
 
-      <main style={{ flex: 1 }}>
-        {/* 4. Hero Section with AI Banner, Stats & Direct Phone 8802155810 */}
-        <HeroSection
-          onOpenAICounselor={() => setIsAICounselorOpen(true)}
-          onOpenLeadModal={handleOpenLeadModal}
-          onSelectCategory={setActiveCategory}
-          onScrollToSection={scrollToSection}
+      {/* Main Page Flow */}
+      <main className="flex-1">
+        {/* 1. Hero Banner with High-Tech 3D Image & High-Converting CTAs */}
+        <HeroBanner onOpenAuditModal={handleOpenAuditModal} />
+
+        {/* 2. Ratings (Google 4.9, Clutch 4.8, GoodFirms 4.9) & Trusted by Global Brands (Magic Software, etc.) */}
+        <TrustedBrandsRating />
+
+        {/* 3. Digital Accessibility Solutions (5 Core Services) */}
+        <AccessibilitySolutions onSelectService={handleOpenAuditModal} />
+
+        {/* 4. AI SEO & Next-Gen Search (LLMO, GEO, AEO, HEO, Web Dev) */}
+        <AiSeoServices onSelectService={handleOpenAuditModal} />
+
+        {/* 5. Client Testimonials (Real Client Faces & Verified Outcomes) */}
+        <ClientTestimonials onOpenAuditModal={handleOpenAuditModal} />
+
+        {/* 6. Blog & Industry Guides ("What to Read Next" Focusing on Services) */}
+        <BlogSection onOpenAuditModal={handleOpenAuditModal} />
+
+        {/* 7. Why Choose Us & Quality Guarantee */}
+        <WhyChooseUs onOpenAuditModal={() => handleOpenAuditModal('Full Enterprise Strategy')} />
+
+        {/* 8. Dedicated Main Lead & Contact Section */}
+        <LeadSection
+          preselectedService={selectedService}
+          onLeadSuccess={handleLeadSuccess}
         />
-
-        {/* 5. Trending Exams & Cutoff Hub (NEET, JEE, CAT, Online DEB) */}
-        <TrendingExamsAlert
-          onOpenLeadModal={handleOpenLeadModal}
-          onOpenAICounselor={() => setIsAICounselorOpen(true)}
-        />
-
-        {/* 6. Comprehensive News Section (Medical, Engineering, Management, Online) */}
-        <NewsSection
-          activeCategory={activeCategory}
-          onSelectCategory={setActiveCategory}
-          searchQuery={searchQuery}
-          onOpenArticleModal={(art) => setSelectedArticle(art)}
-          onOpenLeadModal={handleOpenLeadModal}
-        />
-
-        {/* 7. Online Education Master Guide (UGC-DEB, Validity, Fees) */}
-        <OnlineEducationGuide onOpenLeadModal={handleOpenLeadModal} />
-
-        {/* 8. Top Universities & Accredited Partner Campuses */}
-        <UniversitiesGrid onOpenLeadModal={handleOpenLeadModal} />
-
-        {/* 9. College Comparison Tool */}
-        <CollegeComparison onOpenLeadModal={handleOpenLeadModal} />
-
-        {/* 10. In-Page High-Converting Lead Capture Section */}
-        <LeadFormSection
-          onLeadCaptured={(lead) => {
-            showToast(`Lead registered successfully! Reference: ${lead.id}`);
-          }}
-        />
-
-        {/* 11. Student Testimonials & FAQ Section */}
-        <TestimonialsFAQ onOpenLeadModal={handleOpenLeadModal} />
       </main>
 
-      {/* 12. Rich Branded Footer */}
-      <Footer
-        onSelectCategory={setActiveCategory}
-        onOpenLeadModal={handleOpenLeadModal}
-        onOpenAICounselor={() => setIsAICounselorOpen(true)}
-        onOpenAdminDrawer={() => setIsAdminDrawerOpen(true)}
-      />
+      {/* 50% Website Scrolling Lead Form Popup */}
+      <ScrollLeadPopup onLeadSuccess={handleLeadSuccess} />
 
-      {/* 13. Mobile Bottom Sticky Navigation Bar */}
-      <MobileBottomBar
-        onOpenAICounselor={() => setIsAICounselorOpen(true)}
-        onOpenLeadModal={handleOpenLeadModal}
-      />
-
-      {/* 14. Floating WhatsApp Button on the Right Side (8802155810) */}
+      {/* Floating WhatsApp Action Button */}
       <FloatingWhatsApp />
 
-      {/* ================= MODALS ================= */}
-
-      {/* Full Article Reader Modal */}
-      {selectedArticle && (
-        <ArticleModal
-          article={selectedArticle}
-          onClose={() => setSelectedArticle(null)}
-          onOpenLeadModal={handleOpenLeadModal}
-        />
-      )}
-
-      {/* AI College & Career Counselor Modal */}
-      {isAICounselorOpen && (
-        <AICounselorModal
-          onClose={() => setIsAICounselorOpen(false)}
-          onOpenLeadModal={handleOpenLeadModal}
-        />
-      )}
-
-      {/* Lead Capture Modal */}
-      {isLeadModalOpen && (
-        <LeadCaptureModal
-          source={leadSource}
-          onClose={handleCloseLeadModal}
-          onLeadCaptured={(lead) => {
-            showToast(`Lead registered successfully! Reference: ${lead.id}`);
-          }}
-        />
-      )}
-
-      {/* Site Owner Lead Admin / CRM Drawer */}
-      <LeadAdminDrawer
-        isOpen={isAdminDrawerOpen}
-        onClose={() => setIsAdminDrawerOpen(false)}
-      />
-
-      {/* Success Feedback Toast */}
-      {toastMessage && (
-        <div
-          style={{
-            position: 'fixed',
-            top: '20px',
-            right: '20px',
-            backgroundColor: '#065f46',
-            color: '#ffffff',
-            padding: '1rem 1.5rem',
-            borderRadius: '12px',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
-            zIndex: 9999,
-            fontWeight: 600,
-            fontSize: '0.9rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            animation: 'fadeIn 0.25s ease-out',
-          }}
-        >
-          <span>✔</span>
-          <span>{toastMessage}</span>
-        </div>
-      )}
-    </div>
-  );
-
-  if (isMobilePreview) {
-    return (
+      {/* Mobile Sticky Bottom Conversion Bar */}
       <div
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t px-4 py-2.5 flex items-center justify-between gap-3 shadow-2xl"
         style={{
-          backgroundColor: '#0f172a',
-          minHeight: '100vh',
-          padding: '20px 10px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          backgroundColor: '#ffffff',
+          borderTop: '1px solid #e2e8f0',
         }}
       >
-        {/* Simulator Control Bar */}
-        <div
+        <a
+          href="tel:+919286185258"
+          className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200 cursor-pointer"
+        >
+          <Phone className="w-3.5 h-3.5 text-[#06b6d4]" />
+          <span>Call Us</span>
+        </a>
+
+        <a
+          href="https://wa.me/919286185258?text=Hello%20Rahul,%20I%20want%20to%20discuss%20Accessibility%20and%20AI%20SEO%20services."
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-white text-xs font-bold shadow-sm cursor-pointer"
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            marginBottom: '1rem',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
+            background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
           }}
         >
-          <span style={{ color: '#ffffff', fontWeight: 800, fontSize: '0.9rem' }}>
-            📱 Mobile Preview (iPhone 390px Viewport)
-          </span>
-          <button
-            onClick={() => {
-              if (isLeadModalOpen) {
-                handleCloseLeadModal();
-              } else {
-                handleOpenLeadModal('Mobile Simulator CTA');
-              }
-            }}
-            style={{
-              backgroundColor: '#f59e0b',
-              color: '#0f172a',
-              fontWeight: 800,
-              fontSize: '0.78rem',
-              padding: '0.4rem 0.85rem',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              border: 'none',
-            }}
-          >
-            {isLeadModalOpen ? 'Hide Lead Popup' : 'Show Lead Popup'}
-          </button>
-          <button
-            onClick={() => {
-              window.history.replaceState({}, '', window.location.pathname);
-              setIsMobilePreview(false);
-            }}
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.15)',
-              color: '#ffffff',
-              fontSize: '0.78rem',
-              padding: '0.4rem 0.85rem',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              border: 'none',
-            }}
-          >
-            Switch to Desktop View
-          </button>
-        </div>
+          <MessageSquare className="w-3.5 h-3.5" />
+          <span>WhatsApp</span>
+        </a>
 
-        {/* Realistic Mobile Device Frame */}
-        <div
-          style={{
-            width: '390px',
-            maxWidth: '100%',
-            height: '844px',
-            borderRadius: '44px',
-            border: '10px solid #1e293b',
-            boxShadow: '0 25px 60px rgba(0,0,0,0.7)',
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            backgroundColor: '#f8fafc',
-            position: 'relative',
-          }}
+        <button
+          onClick={() => handleOpenAuditModal('Mobile Quick Audit')}
+          className="flex-1 btn-orange text-xs py-2 px-3 rounded-lg font-bold cursor-pointer"
         >
-          {/* Dynamic Island Notch */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '10px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: '95px',
-              height: '24px',
-              backgroundColor: '#000000',
-              borderRadius: '20px',
-              zIndex: 9999,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              pointerEvents: 'none',
-            }}
-          >
-            <div
-              style={{
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                backgroundColor: '#1e293b',
-              }}
-            />
-          </div>
-
-          <div
-            style={{
-              flex: 1,
-              overflowY: 'auto',
-              overflowX: 'hidden',
-              position: 'relative',
-            }}
-          >
-            {appContent}
-          </div>
-        </div>
+          <span>Free Audit</span>
+        </button>
       </div>
-    );
-  }
 
-  return appContent;
+      {/* Footer with Contact info and EXCLUSIVE Admin Sign-Up/Login Link */}
+      <Footer
+        onOpenAdminModal={() => setIsAdminModalOpen(true)}
+        onOpenAuditModal={() => handleOpenAuditModal('Footer Audit Request')}
+        hasAdmin={hasAdmin}
+      />
+
+      {/* Admin Panel Modal (One-time registration lockout + Lead viewer) */}
+      <AdminModal
+        isOpen={isAdminModalOpen}
+        onClose={() => {
+          setIsAdminModalOpen(false);
+          // Refresh admin state check when modal closes
+          checkAdminExists().then((res) => setHasAdmin(res.hasAdmin));
+        }}
+      />
+
+      {/* Quick Audit Request Modal */}
+      <AuditModal
+        isOpen={isAuditModalOpen}
+        onClose={() => setIsAuditModalOpen(false)}
+        defaultService={selectedService}
+      />
+
+    </div>
+  );
 }
