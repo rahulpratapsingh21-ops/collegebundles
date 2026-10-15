@@ -108,6 +108,7 @@ export default function Logo({ size = 'normal', inverted = false }) {
         </div>
         {!isSmall && (
           <span
+            className="logo-subtitle"
             style={{
               fontSize: '0.68rem',
               letterSpacing: '0.04em',
@@ -121,6 +122,13 @@ export default function Logo({ size = 'normal', inverted = false }) {
           </span>
         )}
       </div>
+      <style>{`
+        @media (max-width: 480px) {
+          .logo-subtitle {
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

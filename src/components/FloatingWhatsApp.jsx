@@ -127,13 +127,9 @@ export default function FloatingWhatsApp() {
       </a>
 
       <style>{`
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
           .floating-whatsapp-container {
-            right: 14px !important;
-            bottom: 74px !important;
-          }
-          .wa-btn-text {
-            font-size: 0.82rem !important;
+            display: none !important;
           }
         }
       `}</style>

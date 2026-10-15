@@ -50,9 +50,10 @@ export default function CollegeComparison({ onOpenLeadModal }) {
             gap: '1rem',
             flexWrap: 'wrap',
             marginBottom: '2rem',
+            width: '100%',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', maxWidth: '100%', flexWrap: 'wrap', justifyContent: 'center' }}>
             <span style={{ fontWeight: 700, fontSize: '0.9rem', color: '#1e293b' }}>Select College 1:</span>
             <select
               value={collegeAId}
@@ -64,6 +65,7 @@ export default function CollegeComparison({ onOpenLeadModal }) {
                 backgroundColor: '#ffffff',
                 fontWeight: 600,
                 fontSize: '0.9rem',
+                maxWidth: '100%',
               }}
             >
               {topUniversities.map((c) => (
@@ -76,7 +78,7 @@ export default function CollegeComparison({ onOpenLeadModal }) {
 
           <span style={{ fontWeight: 800, color: '#94a3b8', fontSize: '1.1rem' }}>VS</span>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', maxWidth: '100%', flexWrap: 'wrap', justifyContent: 'center' }}>
             <span style={{ fontWeight: 700, fontSize: '0.9rem', color: '#1e293b' }}>Select College 2:</span>
             <select
               value={collegeBId}
@@ -88,6 +90,7 @@ export default function CollegeComparison({ onOpenLeadModal }) {
                 backgroundColor: '#ffffff',
                 fontWeight: 600,
                 fontSize: '0.9rem',
+                maxWidth: '100%',
               }}
             >
               {topUniversities.map((c) => (
@@ -104,14 +107,17 @@ export default function CollegeComparison({ onOpenLeadModal }) {
           style={{
             borderRadius: '16px',
             border: '1px solid #e2e8f0',
-            overflow: 'hidden',
+            overflowX: 'auto',
+            WebkitOverflowScrolling: 'touch',
             boxShadow: 'var(--shadow-md)',
             backgroundColor: '#ffffff',
             maxWidth: '950px',
             margin: '0 auto 2.5rem auto',
+            width: '100%',
           }}
+          className="comparison-table-wrapper"
         >
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+          <table style={{ width: '100%', minWidth: '580px', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
             <thead>
               <tr style={{ backgroundColor: '#0f172a', color: '#ffffff' }}>
                 <th style={{ padding: '1.25rem', width: '28%', fontSize: '0.95rem' }}>Parameters</th>
@@ -218,20 +224,43 @@ export default function CollegeComparison({ onOpenLeadModal }) {
         </div>
 
         {/* Support Phone Bar */}
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: 'center', maxWidth: '100%' }}>
           <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
             Need help deciding between these two universities? Call our senior academic counselor directly:
           </p>
           <a
             href="tel:8802155810"
-            className="btn btn-call"
-            style={{ padding: '0.65rem 1.5rem', fontSize: '1rem' }}
+            className="btn btn-call compare-call-btn"
+            style={{
+              padding: '0.65rem 1.25rem',
+              fontSize: '0.95rem',
+              maxWidth: '100%',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              boxSizing: 'border-box',
+            }}
           >
-            <Phone size={18} />
-            <span>Call 8802155810 (Free Comparison Report)</span>
+            <Phone size={18} style={{ flexShrink: 0 }} />
+            <span className="compare-btn-text">Call 8802155810 (Free Comparison Report)</span>
           </a>
         </div>
       </div>
+      <style>{`
+        @media (max-width: 480px) {
+          .compare-btn-text {
+            font-size: 0.85rem !important;
+            white-space: normal !important;
+            text-align: center !important;
+          }
+          .compare-call-btn {
+            width: 100% !important;
+            padding: 0.65rem 0.5rem !important;
+            white-space: normal !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

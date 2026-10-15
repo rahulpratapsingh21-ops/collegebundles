@@ -54,13 +54,13 @@ export default function Footer({ onSelectCategory, onOpenLeadModal, onOpenAICoun
             </p>
           </div>
 
-          <div style={{ flex: 1, minWidth: '280px', maxWidth: '420px' }}>
+          <div style={{ flex: 1, minWidth: 'min(100%, 280px)', maxWidth: '420px', width: '100%' }}>
             {subscribed ? (
               <div style={{ backgroundColor: '#064e3b', color: '#6ee7b7', padding: '0.75rem 1rem', borderRadius: '10px', fontSize: '0.85rem', fontWeight: 600 }}>
                 ✔ Thank you for subscribing! You will receive verified news bulletins.
               </div>
             ) : (
-              <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: '0.5rem' }}>
+              <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: '0.5rem', width: '100%' }}>
                 <input
                   type="email"
                   value={newsletterEmail}
@@ -68,6 +68,7 @@ export default function Footer({ onSelectCategory, onOpenLeadModal, onOpenAICoun
                   placeholder="Enter your email address"
                   style={{
                     flex: 1,
+                    minWidth: 0,
                     padding: '0.75rem 1rem',
                     borderRadius: '10px',
                     border: '1px solid #334155',
@@ -82,7 +83,7 @@ export default function Footer({ onSelectCategory, onOpenLeadModal, onOpenAICoun
                   type="submit" 
                   className="btn btn-primary" 
                   disabled={isSubscribing}
-                  style={{ padding: '0.75rem 1.25rem', opacity: isSubscribing ? 0.75 : 1, cursor: isSubscribing ? 'not-allowed' : 'pointer' }}
+                  style={{ padding: '0.75rem 1.25rem', opacity: isSubscribing ? 0.75 : 1, cursor: isSubscribing ? 'not-allowed' : 'pointer', flexShrink: 0 }}
                 >
                   {isSubscribing ? (
                     <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />

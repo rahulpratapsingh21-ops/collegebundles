@@ -64,13 +64,14 @@ export default function Navbar({
         }}
       >
         <div
-          className="container"
+          className="container navbar-container"
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             height: '72px',
             gap: '1rem',
+            maxWidth: '100%',
           }}
         >
           {/* Brand Logo */}
@@ -146,7 +147,7 @@ export default function Navbar({
           </nav>
 
           {/* Right Action Items: Phone, Search, Lead Button */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div className="navbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
             {/* Search Input on Desktop */}
             <div
               style={{
@@ -195,6 +196,7 @@ export default function Navbar({
             {/* Phone Hotline Badge (Required: 8802155810) */}
             <a
               href="tel:8802155810"
+              className="phone-badge"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -466,6 +468,54 @@ export default function Navbar({
         @media (max-width: 899px) {
           .mobile-search-bar {
             display: block !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .navbar-container {
+            height: 60px !important;
+            gap: 0.5rem !important;
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+          }
+          .navbar-actions {
+            gap: 0.45rem !important;
+          }
+          .phone-text {
+            display: none !important;
+          }
+          .phone-badge {
+            padding: 0.45rem !important;
+            border-radius: 50% !important;
+            width: 38px !important;
+            height: 38px !important;
+            min-width: 38px !important;
+            justify-content: center !important;
+            gap: 0 !important;
+            flex-shrink: 0 !important;
+          }
+          .phone-badge div {
+            width: 22px !important;
+            height: 22px !important;
+          }
+        }
+        @media (max-width: 400px) {
+          .mobile-hamburger {
+            padding: 0.35rem !important;
+          }
+        }
+        @media (max-width: 360px) {
+          .navbar-container {
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+            gap: 0.25rem !important;
+          }
+          .navbar-actions {
+            gap: 0.25rem !important;
+          }
+          .phone-badge {
+            width: 34px !important;
+            height: 34px !important;
+            min-width: 34px !important;
           }
         }
       `}</style>

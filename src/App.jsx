@@ -33,20 +33,29 @@ export default function App() {
 
   const [toastMessage, setToastMessage] = useState(null);
   const [hasTriggeredScrollLead, setHasTriggeredScrollLead] = useState(false);
+  const [isMobilePreview, setIsMobilePreview] = useState(false);
 
-  // 50% Scroll Lead Form Popup Trigger
+  // Check if mobile simulation mode is requested: ?view=mobile
+  useEffect(() => {
+    if (window.location.search.includes('view=mobile')) {
+      setIsMobilePreview(true);
+    }
+  }, []);
+
+  // 65% Scroll Lead Form Popup Trigger (Respects user dismissal in session)
   useEffect(() => {
     const handleScroll = () => {
       if (hasTriggeredScrollLead) return;
+      if (sessionStorage.getItem('cb_popup_dismissed') === 'true') return;
 
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
       if (scrollHeight <= 0) return;
 
       const progress = (scrollTop / scrollHeight) * 100;
-      if (progress >= 50) {
+      if (progress >= 65) {
         setHasTriggeredScrollLead(true);
-        setLeadSource('50% Scroll Automatic Popup');
+        setLeadSource('65% Scroll Automatic Popup');
         setIsLeadModalOpen(true);
       }
     };
@@ -89,6 +98,12 @@ export default function App() {
     setIsLeadModalOpen(true);
   };
 
+  const handleCloseLeadModal = () => {
+    setIsLeadModalOpen(false);
+    sessionStorage.setItem('cb_popup_dismissed', 'true');
+    setHasTriggeredScrollLead(true);
+  };
+
   const handleSelectArticleByTitle = (title) => {
     const found = newsArticles.find((a) => a.title.toLowerCase().includes(title.toLowerCase().slice(0, 20)));
     if (found) {
@@ -105,7 +120,7 @@ export default function App() {
     }
   };
 
-  return (
+  const appContent = (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* 1. Top Offer & Countdown Bar */}
       <TopNotificationBar
@@ -211,7 +226,7 @@ export default function App() {
       {isLeadModalOpen && (
         <LeadCaptureModal
           source={leadSource}
-          onClose={() => setIsLeadModalOpen(false)}
+          onClose={handleCloseLeadModal}
           onLeadCaptured={(lead) => {
             showToast(`Lead registered successfully! Reference: ${lead.id}`);
           }}
@@ -251,4 +266,131 @@ export default function App() {
       )}
     </div>
   );
+
+  if (isMobilePreview) {
+    return (
+      <div
+        style={{
+          backgroundColor: '#0f172a',
+          minHeight: '100vh',
+          padding: '20px 10px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        {/* Simulator Control Bar */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            marginBottom: '1rem',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+          }}
+        >
+          <span style={{ color: '#ffffff', fontWeight: 800, fontSize: '0.9rem' }}>
+            📱 Mobile Preview (iPhone 390px Viewport)
+          </span>
+          <button
+            onClick={() => {
+              if (isLeadModalOpen) {
+                handleCloseLeadModal();
+              } else {
+                handleOpenLeadModal('Mobile Simulator CTA');
+              }
+            }}
+            style={{
+              backgroundColor: '#f59e0b',
+              color: '#0f172a',
+              fontWeight: 800,
+              fontSize: '0.78rem',
+              padding: '0.4rem 0.85rem',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              border: 'none',
+            }}
+          >
+            {isLeadModalOpen ? 'Hide Lead Popup' : 'Show Lead Popup'}
+          </button>
+          <button
+            onClick={() => {
+              window.history.replaceState({}, '', window.location.pathname);
+              setIsMobilePreview(false);
+            }}
+            style={{
+              backgroundColor: 'rgba(255,255,255,0.15)',
+              color: '#ffffff',
+              fontSize: '0.78rem',
+              padding: '0.4rem 0.85rem',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              border: 'none',
+            }}
+          >
+            Switch to Desktop View
+          </button>
+        </div>
+
+        {/* Realistic Mobile Device Frame */}
+        <div
+          style={{
+            width: '390px',
+            maxWidth: '100%',
+            height: '844px',
+            borderRadius: '44px',
+            border: '10px solid #1e293b',
+            boxShadow: '0 25px 60px rgba(0,0,0,0.7)',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            backgroundColor: '#f8fafc',
+            position: 'relative',
+          }}
+        >
+          {/* Dynamic Island Notch */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '10px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '95px',
+              height: '24px',
+              backgroundColor: '#000000',
+              borderRadius: '20px',
+              zIndex: 9999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'none',
+            }}
+          >
+            <div
+              style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                backgroundColor: '#1e293b',
+              }}
+            />
+          </div>
+
+          <div
+            style={{
+              flex: 1,
+              overflowY: 'auto',
+              overflowX: 'hidden',
+              position: 'relative',
+            }}
+          >
+            {appContent}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return appContent;
 }

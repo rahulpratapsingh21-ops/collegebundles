@@ -121,15 +121,17 @@ export default function NewsSection({
 
         {/* Category Filter Tabs */}
         <div
+          className="no-scrollbar news-tabs-container"
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-start',
             gap: '0.5rem',
             overflowX: 'auto',
+            maxWidth: '100%',
+            WebkitOverflowScrolling: 'touch',
             paddingBottom: '0.75rem',
             marginBottom: '2rem',
-            scrollbarWidth: 'none',
           }}
         >
           {newsCategories.map((cat) => {
@@ -221,7 +223,7 @@ export default function NewsSection({
                   overflow: 'hidden',
                   marginBottom: '2.5rem',
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
                   cursor: 'pointer',
                   boxShadow: 'var(--shadow-md)',
                 }}
@@ -328,7 +330,7 @@ export default function NewsSection({
                       gap: '0.75rem',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
                       <button
                         className="btn btn-primary"
                         style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
@@ -378,7 +380,7 @@ export default function NewsSection({
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
                 gap: '1.75rem',
               }}
             >
