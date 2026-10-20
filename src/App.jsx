@@ -252,6 +252,8 @@ export default function App() {
       {selectedArticle && (
         <ArticleModal
           article={selectedArticle}
+          allArticles={liveArticles}
+          onSelectArticle={(art) => setSelectedArticle(art)}
           onClose={() => setSelectedArticle(null)}
           onOpenLeadModal={handleOpenLeadModal}
         />

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { 
   X, 
   Calendar, 
@@ -10,11 +10,21 @@ import {
   Sparkles, 
   CheckCircle2, 
   HelpCircle, 
-  Share2 
+  Share2,
+  BookOpen,
+  ArrowRight
 } from 'lucide-react';
+import { getAllArticles } from '../lib/newsCmsStorage';
 
-export default function ArticleModal({ article, onClose, onOpenLeadModal }) {
-  const [modalScrollTriggered, setModalScrollTriggered] = React.useState(false);
+export default function ArticleModal({ 
+  article, 
+  allArticles, 
+  onSelectArticle, 
+  onClose, 
+  onOpenLeadModal 
+}) {
+  const [modalScrollTriggered, setModalScrollTriggered] = useState(false);
+  const modalContentRef = useRef(null);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -24,7 +34,33 @@ export default function ArticleModal({ article, onClose, onOpenLeadModal }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
+  // Recommended Articles: 2 or 3 articles from the exact same category
+  const articlesList = (allArticles && allArticles.length > 0) ? allArticles : getAllArticles();
+  const recommendedArticles = useMemo(() => {
+    if (!articlesList || !article) return [];
+    const currentCatSlug = (article.categorySlug || article.category || '').toLowerCase();
+    const currentCat = (article.category || '').toLowerCase();
+
+    const matches = articlesList.filter((a) => {
+      if (a.id === article.id || (a.slug && a.slug === article.slug)) return false;
+      const catSlug = (a.categorySlug || '').toLowerCase();
+      const cat = (a.category || '').toLowerCase();
+      return (catSlug && catSlug === currentCatSlug) || (cat && cat === currentCat);
+    });
+
+    return matches.slice(0, 3);
+  }, [articlesList, article]);
+
   if (!article) return null;
+
+  const handleSelectRecommended = (rec) => {
+    if (onSelectArticle) {
+      onSelectArticle(rec);
+      if (modalContentRef.current) {
+        modalContentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+  };
 
   const handleModalScroll = (e) => {
     if (modalScrollTriggered) return;
@@ -42,6 +78,7 @@ export default function ArticleModal({ article, onClose, onOpenLeadModal }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div
+        ref={modalContentRef}
         className="modal-content"
         onClick={(e) => e.stopPropagation()}
         onScroll={handleModalScroll}
@@ -282,6 +319,113 @@ export default function ArticleModal({ article, onClose, onOpenLeadModal }) {
               </div>
             );
           })()}
+
+          {/* Recommended Articles in Same Category (2 or 3 articles) */}
+          {recommendedArticles.length > 0 && (
+            <div style={{ marginBottom: '2.5rem' }}>
+              <div 
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between', 
+                  marginBottom: '1rem', 
+                  borderBottom: '2px solid #f1f5f9', 
+                  paddingBottom: '0.6rem' 
+                }}
+              >
+                <h3 
+                  style={{ 
+                    fontSize: '1.25rem', 
+                    fontWeight: 800, 
+                    color: '#0f172a', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '0.5rem', 
+                    margin: 0 
+                  }}
+                >
+                  <BookOpen size={20} color="#2563eb" />
+                  Recommended in {article.category} News
+                </h3>
+                <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>
+                  {recommendedArticles.length} Related Articles
+                </span>
+              </div>
+
+              <div 
+                style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', 
+                  gap: '1rem' 
+                }}
+              >
+                {recommendedArticles.map((rec) => (
+                  <div
+                    key={rec.id || rec.slug}
+                    onClick={() => handleSelectRecommended(rec)}
+                    style={{
+                      backgroundColor: '#ffffff',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '14px',
+                      overflow: 'hidden',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = '#2563eb';
+                      e.currentTarget.style.transform = 'translateY(-3px)';
+                      e.currentTarget.style.boxShadow = '0 8px 18px rgba(37,99,235,0.12)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = '#e2e8f0';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.04)';
+                    }}
+                  >
+                    <div style={{ height: '120px', width: '100%', overflow: 'hidden', backgroundColor: '#f1f5f9' }}>
+                      <img
+                        src={rec.image || '/engineering-news.jpg'}
+                        alt={rec.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        onError={(e) => { e.currentTarget.src = '/engineering-news.jpg'; }}
+                      />
+                    </div>
+                    <div style={{ padding: '0.85rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.4rem', fontSize: '0.72rem', color: '#64748b' }}>
+                        <span style={{ fontWeight: 700, color: '#2563eb', backgroundColor: '#eff6ff', padding: '0.15rem 0.45rem', borderRadius: '4px' }}>
+                          {rec.category}
+                        </span>
+                        <span>•</span>
+                        <span>{rec.readTime || '4 min read'}</span>
+                      </div>
+                      <h4 
+                        style={{ 
+                          fontSize: '0.9rem', 
+                          fontWeight: 700, 
+                          color: '#0f172a', 
+                          lineHeight: 1.4, 
+                          margin: '0 0 0.5rem 0', 
+                          display: '-webkit-box', 
+                          WebkitLineClamp: 2, 
+                          WebkitBoxOrient: 'vertical', 
+                          overflow: 'hidden' 
+                        }}
+                      >
+                        {rec.title}
+                      </h4>
+                      <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#2563eb', fontSize: '0.8rem', fontWeight: 700, paddingTop: '0.3rem' }}>
+                        <span>Read Full Story</span>
+                        <ArrowRight size={13} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Counselor Call-to-Action Box inside Modal */}
           <div

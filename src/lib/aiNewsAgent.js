@@ -102,9 +102,18 @@ Source Material / RSS Feed / Official Update: ${sourceContent}
 - Do not begin with generic background information, a long history, or unnecessary introductory statements.
 - If the latest information cannot be verified, do not invent an update. Clearly explain what is confirmed and what remains unconfirmed.
 
-## 2. Word Limit
-- Target approximately 1,900–2,100 words (approximately 2,000 words total) of authoritative, comprehensive, in-depth educational coverage.
-- Thoroughly expand each section with relevant context, eligibility criteria, admission/counseling rules, seat matrices, cutoff analysis, step-by-step procedures, actionable advice for students and parents, comparison tables, and exhaustive FAQs.
+## 2. Article Length & Word Count Requirement (MANDATORY: 2,000 Words)
+- Every article MUST reach approximately 2,000 words (strict target: 1,900 to 2,200 words total).
+- Short or superficial summaries are strictly prohibited. The content must be exhaustive, thorough, and highly authoritative.
+- Thoroughly expand each section with rich educational details:
+  * Official regulatory context (e.g. NTA, MCC, JoSAA, IIM Board, UGC-DEB directives).
+  * In-depth cutoff analysis with opening/closing rank comparisons across top colleges.
+  * Detailed eligibility criteria, seat reservation matrix, and fee structure breakdown.
+  * Step-by-step application, choice filling, and seat acceptance guide.
+  * Mandatory document verification checklist and counseling guidelines.
+  * Actionable guidance for aspirants, placement trends, and ROI insights.
+  * Structured Markdown comparison tables for dates, rounds, and eligibility criteria.
+  * 6 to 8 exhaustive FAQs with thorough multi-sentence answers numbered as Q1:, Q2:, Q3:, etc.
 - Keep SEO metadata separate from the article word count.
 
 ## 3. Introduction and Article Structure
