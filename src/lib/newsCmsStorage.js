@@ -28,7 +28,7 @@ export const DEFAULT_AUTOMATION_SETTINGS = {
   imageMaxWidth: 1200,
   timezone: 'Asia/Kolkata',
   aiProvider: 'OpenAI ChatGPT (gpt-4o-mini)',
-  openaiApiKey: '',
+  openaiApiKey: typeof import.meta !== 'undefined' ? (import.meta.env?.VITE_OPENAI_API_KEY || '') : '',
   openaiModel: 'gpt-4o-mini',
 };
 
