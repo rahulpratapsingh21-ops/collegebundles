@@ -131,25 +131,33 @@ Heading hierarchy:
 Never use multiple H1 headings or skip heading levels unnecessarily.
 Keep paragraphs concise (2–5 sentences).
 
-## 4. Use H2 and H3 Headings Properly
-Suggested structure:
+## 4. Mandatory Section Structure (Must Reach 2,000 Words Total)
+Follow this exact structure with rich, expansive paragraphs:
 # [SEO-Friendly News Headline]
-**Latest Update:** [Newest verified development in 1–2 sentences.]
-[Direct introduction answering the main question.]
-## [Main Topic]: What Happened?
-[Explain the event, announcement, result, decision, or development in thorough detail.]
-## Important Dates and Details
-[Markdown table for dates/schedules.]
-## [Relevant Main Section]
-[Provide useful details in concise paragraphs.]
-### [Relevant Subtopic]
-[Explain the subtopic clearly.]
-## How to Check / Apply / Register / Download
-[Include only if relevant.]
-## What Happens Next?
-[Explain next confirmed step or expected development.]
+**Latest Update:** [2-sentence verified breakthrough update in bold]
+
+[Opening Paragraph: 120-150 words answering what, who, when, and significance directly]
+
+## [Topic]: Background and Official Regulatory Framework
+[Write 350-400 words detailing the official regulatory backdrop (e.g. NTA, MCC, JoSAA, IIM Committee, UGC-DEB directives), policy background, and historical counseling trends.]
+
+## Detailed Breakdown & In-Depth Analysis: Key Changes and Cutoff Trends
+[Write 400-450 words breaking down the notification in thorough detail: category-wise patterns, branch-wise cutoffs, opening and closing rank shifts, and seat matrices across premier institutions.]
+
+## Comparative Data Matrix and Key Schedules
+[Provide an extensive Markdown table with at least 8-10 rows comparing Institutes, Branches, Quotas, Categories, Dates, and Cutoff Ranks.]
+
+## Category Reservation Policies, Eligibility Criteria & Quota Distribution
+[Write 300-350 words detailing All-India Quota (AI), State Quotas, category reservations (General, OBC-NCL, EWS, SC, ST, PwD), eligibility mandates, and document verification rules.]
+
+## Step-by-Step Procedure: How to Apply, Register & Complete Online Reporting
+[Write 300-350 words with a numbered list (1., 2., 3...) detailing: official portal login, choice filling, fee payment, document upload, and online verification.]
+
+## Future Prospects, Placement Insights & Expert Guidance for Aspirants
+[Write 250-300 words analyzing career impact, average salary packages, recruitment trends, and actionable counsel for students and parents.]
+
 ## Frequently Asked Questions
-[Include 6–8 exhaustive FAQs using H3 for questions. Format each question strictly with sequential numbering: "### Q1: [Question?]", "### Q2: [Question?]", "### Q3: [Question?]", etc., followed by direct 2–4 sentence answers for each.]
+[Include 6–8 exhaustive FAQs using H3 for questions. Format each question strictly with sequential numbering: "### Q1: [Question?]", "### Q2: [Question?]", "### Q3: [Question?]", etc., followed by direct 3–4 sentence comprehensive answers for each.]
 
 - Mandatory rule: Do NOT include any "Latest News & Updates", "Key Highlights", or "Important Takeaways" headings or bullet sections in the article body.
 
