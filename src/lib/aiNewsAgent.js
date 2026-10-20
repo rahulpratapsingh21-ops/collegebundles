@@ -103,10 +103,9 @@ Source Material / RSS Feed / Official Update: ${sourceContent}
 - If the latest information cannot be verified, do not invent an update. Clearly explain what is confirmed and what remains unconfirmed.
 
 ## 2. Word Limit
-- Target approximately 1,200–1,400 words when sufficient verified information is available.
-- The absolute maximum is 1,500 words for the entire article, including the introduction, headings, tables, bullet points, and FAQs.
+- Target approximately 1,900–2,100 words (approximately 2,000 words total) of authoritative, comprehensive, in-depth educational coverage.
+- Thoroughly expand each section with relevant context, eligibility criteria, admission/counseling rules, seat matrices, cutoff analysis, step-by-step procedures, actionable advice for students and parents, comparison tables, and exhaustive FAQs.
 - Keep SEO metadata separate from the article word count.
-- Never exceed 1,500 words.
 
 ## 3. Introduction and Article Structure
 After the main H1 headline and Latest Update statement, write an introduction of approximately 80–120 words.
@@ -270,7 +269,7 @@ export async function callChatGptForNewsArticle({ topic, sourceContent, primaryK
           messages: [
             {
               role: 'system',
-              content: 'You are an award-winning senior education news editor and Google News SEO specialist. You write authoritative, verified 1,200–1,400 word articles adhering strictly to journalistic guidelines without hallucinations.',
+              content: 'You are an award-winning senior education news editor and Google News SEO specialist. You write authoritative, verified, exhaustive 2,000-word articles adhering strictly to journalistic guidelines without hallucinations.',
             },
             {
               role: 'user',
@@ -278,7 +277,7 @@ export async function callChatGptForNewsArticle({ topic, sourceContent, primaryK
             },
           ],
           temperature: 0.35,
-          max_tokens: 3500,
+          max_tokens: 4096,
         }),
       });
 

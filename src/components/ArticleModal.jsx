@@ -202,61 +202,86 @@ export default function ArticleModal({ article, onClose, onOpenLeadModal }) {
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
 
-          {/* Dates Table if provided */}
-          {article.datesTable && article.datesTable.length > 0 && (
-            <div style={{ marginBottom: '2.5rem' }}>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: '#0f172a' }}>
-                Important Dates & Counselling Timetable
-              </h3>
-              <div style={{ overflowX: 'auto', border: '1px solid #e2e8f0', borderRadius: '12px' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
-                  <thead>
-                    <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-                      <th style={{ padding: '0.75rem 1rem', color: '#475569', fontWeight: 600 }}>Event / Milestone</th>
-                      <th style={{ padding: '0.75rem 1rem', color: '#475569', fontWeight: 600 }}>Scheduled Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {article.datesTable.map((row, idx) => (
-                      <tr key={idx} style={{ borderBottom: idx !== article.datesTable.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
-                        <td style={{ padding: '0.75rem 1rem', fontWeight: 500 }}>{row.event}</td>
-                        <td style={{ padding: '0.75rem 1rem', color: '#1d4ed8', fontWeight: 700 }}>{row.date}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
+          {/* Dates Table if provided and not already in HTML content */}
+          {(() => {
+            const hasHtmlTable = article.content && article.content.includes('<table');
+            const validDates = Array.isArray(article.datesTable)
+              ? article.datesTable.filter((r) => (r.event || r.milestone || r.Event) && (r.date || r.scheduledDate || r.Date))
+              : [];
+            if (hasHtmlTable || validDates.length === 0) return null;
 
-          {/* FAQs Accordion if provided */}
-          {article.faqs && article.faqs.length > 0 && (
-            <div style={{ marginBottom: '2.5rem' }}>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <HelpCircle size={18} color="#2563eb" /> Frequently Asked Questions
-              </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {article.faqs.map((faq, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      backgroundColor: '#f8fafc',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '10px',
-                      padding: '1rem',
-                    }}
-                  >
-                    <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#0f172a', marginBottom: '0.35rem' }}>
-                      Q: {faq.q}
-                    </div>
-                    <div style={{ fontSize: '0.875rem', color: '#475569', lineHeight: 1.6 }}>
-                      {faq.a}
-                    </div>
-                  </div>
-                ))}
+            return (
+              <div style={{ marginBottom: '2.5rem' }}>
+                <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: '#0f172a' }}>
+                  Important Dates & Counselling Timetable
+                </h3>
+                <div style={{ overflowX: 'auto', border: '1px solid #e2e8f0', borderRadius: '12px' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+                    <thead>
+                      <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                        <th style={{ padding: '0.75rem 1rem', color: '#475569', fontWeight: 600 }}>Event / Milestone</th>
+                        <th style={{ padding: '0.75rem 1rem', color: '#475569', fontWeight: 600 }}>Scheduled Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {validDates.map((row, idx) => (
+                        <tr key={idx} style={{ borderBottom: idx !== validDates.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
+                          <td style={{ padding: '0.75rem 1rem', fontWeight: 500 }}>{row.event || row.milestone || row.Event}</td>
+                          <td style={{ padding: '0.75rem 1rem', color: '#1d4ed8', fontWeight: 700 }}>{row.date || row.scheduledDate || row.Date}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
+
+          {/* FAQs Accordion if provided and not already rendered in HTML */}
+          {(() => {
+            const hasFaqsInContent = article.content && (
+              article.content.includes('Frequently Asked Questions') ||
+              article.content.includes('Frequently Asked')
+            );
+            const validFaqs = Array.isArray(article.faqs)
+              ? article.faqs
+                  .map((f) => ({
+                    q: (f.question || f.q || f.Question || '').trim(),
+                    a: (f.answer || f.a || f.Answer || '').trim(),
+                  }))
+                  .filter((f) => f.q.length > 0 && f.a.length > 0)
+              : [];
+
+            if (hasFaqsInContent || validFaqs.length === 0) return null;
+
+            return (
+              <div style={{ marginBottom: '2.5rem' }}>
+                <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <HelpCircle size={18} color="#2563eb" /> Frequently Asked Questions
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  {validFaqs.map((faq, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        backgroundColor: '#f8fafc',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '10px',
+                        padding: '1.1rem',
+                      }}
+                    >
+                      <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#0f172a', marginBottom: '0.4rem' }}>
+                        Q: {faq.q}
+                      </div>
+                      <div style={{ fontSize: '0.875rem', color: '#475569', lineHeight: 1.6 }}>
+                        {faq.a}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Counselor Call-to-Action Box inside Modal */}
           <div
