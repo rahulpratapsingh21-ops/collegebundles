@@ -140,7 +140,7 @@ Suggested structure:
 ## What Happens Next?
 [Explain next confirmed step or expected development.]
 ## Frequently Asked Questions
-[Include 4–6 FAQs using H3 for questions and direct 1–3 sentence answers.]
+[Include 6–8 exhaustive FAQs using H3 for questions. Format each question strictly with sequential numbering: "### Q1: [Question?]", "### Q2: [Question?]", "### Q3: [Question?]", etc., followed by direct 2–4 sentence answers for each.]
 
 - Mandatory rule: Do NOT include any "Latest News & Updates", "Key Highlights", or "Important Takeaways" headings or bullet sections in the article body.
 
@@ -233,6 +233,16 @@ export function convertMarkdownToEditorialHtml(markdown) {
       return `<p style="margin-bottom:1rem;line-height:1.75;color:#334155;">${trimmed}</p>`;
     })
     .join('\n');
+
+  // Number FAQ questions sequentially (Q1:, Q2:, Q3:...)
+  let faqCounter = 0;
+  html = html.replace(/(<h2[^>]*>Frequently Asked Questions<\/h2>[\s\S]*)/i, (faqBlock) => {
+    return faqBlock.replace(/<h3([^>]*)>(.*?)<\/h3>/gi, (h3Match, attrs, qText) => {
+      faqCounter++;
+      const cleanQ = qText.replace(/^Q\d*[:.]\s*/i, '').trim();
+      return `<h3${attrs}>Q${faqCounter}: ${cleanQ}</h3>`;
+    });
+  });
 
   return html;
 }
@@ -339,10 +349,11 @@ export async function callChatGptForNewsArticle({ topic, sourceContent, primaryK
     for (const pair of qaPairs) {
       const qMatch = pair.match(/###\s+([^\n]+)/);
       if (qMatch) {
-        const question = qMatch[1].trim();
+        const cleanQuestion = qMatch[1].replace(/^Q\d*[:.]\s*/i, '').trim();
+        const numberedQ = `Q${faqs.length + 1}: ${cleanQuestion}`;
         const answer = pair.replace(/###\s+[^\n]+/, '').replace(/<[^>]+>/g, '').trim().split('\n')[0];
-        if (question && answer) {
-          faqs.push({ q: question, a: answer });
+        if (cleanQuestion && answer) {
+          faqs.push({ q: numberedQ, a: answer, question: numberedQ, answer });
         }
       }
     }

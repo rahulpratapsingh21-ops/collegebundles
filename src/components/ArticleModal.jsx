@@ -271,7 +271,7 @@ export default function ArticleModal({ article, onClose, onOpenLeadModal }) {
                       }}
                     >
                       <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#0f172a', marginBottom: '0.4rem' }}>
-                        Q: {faq.q}
+                        {faq.q.match(/^Q\d+[:.]/i) ? faq.q : `Q${i + 1}: ${faq.q.replace(/^Q\d*[:.]\s*/i, '')}`}
                       </div>
                       <div style={{ fontSize: '0.875rem', color: '#475569', lineHeight: 1.6 }}>
                         {faq.a}
