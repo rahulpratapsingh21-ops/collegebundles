@@ -27,7 +27,9 @@ export const DEFAULT_AUTOMATION_SETTINGS = {
   imageQuality: 0.85,
   imageMaxWidth: 1200,
   timezone: 'Asia/Kolkata',
-  aiProvider: 'CollegeBundles AI Editorial Engine',
+  aiProvider: 'OpenAI ChatGPT (gpt-4o-mini)',
+  openaiApiKey: '',
+  openaiModel: 'gpt-4o-mini',
 };
 
 // Dispatch custom event when articles or news update so website UI reacts instantly

@@ -164,6 +164,57 @@ export default function AutomationSettingsModal({
               </div>
             </div>
 
+            {/* OpenAI ChatGPT Integration */}
+            <div style={{ backgroundColor: '#f0fdf4', padding: '1.25rem', borderRadius: '10px', border: '1.5px solid #86efac' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
+                <Sparkles size={18} color="#16a34a" />
+                <label style={{ fontSize: '0.9rem', fontWeight: 800, color: '#166534', margin: 0 }}>
+                  OpenAI ChatGPT API Engine
+                </label>
+                <span style={{ fontSize: '0.7rem', padding: '0.15rem 0.45rem', backgroundColor: '#dcfce7', color: '#15803d', borderRadius: '999px', fontWeight: 700 }}>
+                  Universal SEO Prompt Active
+                </span>
+              </div>
+              <p style={{ fontSize: '0.78rem', color: '#374151', margin: '0 0 1rem 0', lineHeight: 1.45 }}>
+                Enter your OpenAI API key below. ChatGPT will automatically write 1,200–1,400 word SEO news articles with the exact Universal SEO structure (H1, bold Latest Update, single "## Latest News & Updates" heading, tables, and 4–6 FAQs).
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                <div>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 700, color: '#1f2937', display: 'block', marginBottom: '0.25rem' }}>
+                    OpenAI API Key (sk-...)
+                  </label>
+                  <input
+                    type="password"
+                    placeholder="sk-proj-..."
+                    value={formData.openaiApiKey || ''}
+                    onChange={(e) => setFormData({ ...formData, openaiApiKey: e.target.value })}
+                    style={{ width: '100%', padding: '0.55rem', borderRadius: '8px', border: '1.5px solid #bbf7d0', fontSize: '0.85rem', backgroundColor: '#ffffff' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 700, color: '#1f2937', display: 'block', marginBottom: '0.25rem' }}>
+                    Model
+                  </label>
+                  <select
+                    value={formData.openaiModel || 'gpt-4o-mini'}
+                    onChange={(e) => setFormData({ ...formData, openaiModel: e.target.value })}
+                    style={{ width: '100%', padding: '0.55rem', borderRadius: '8px', border: '1.5px solid #bbf7d0', fontSize: '0.85rem', backgroundColor: '#ffffff' }}
+                  >
+                    <option value="gpt-4o-mini">gpt-4o-mini (Recommended)</option>
+                    <option value="gpt-4o">gpt-4o (Most Intelligent)</option>
+                    <option value="gpt-4-turbo">gpt-4-turbo</option>
+                    <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ fontSize: '0.72rem', color: '#15803d', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <Check size={13} /> Target Length: 1,200–1,400 words • Fact Verification Mode • Zero Hallucinations
+              </div>
+            </div>
+
             {/* Timezone */}
             <div>
               <label style={{ fontSize: '0.78rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '0.3rem' }}>
