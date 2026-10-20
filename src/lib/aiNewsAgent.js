@@ -211,6 +211,10 @@ export function convertMarkdownToEditorialHtml(markdown) {
       tableHtml += '</tbody></table></div>';
       return tableHtml;
     })
+    // Numbered / ordered lists (1. Item, 2. Item...)
+    .replace(/^\s*\d+\.\s+([^\n]+)/gim, '<li class="ordered-step" style="margin-bottom:0.75rem;line-height:1.75;">$1</li>')
+    .replace(/((?:<li class="ordered-step"[\s\S]*?<\/li>\s*)+)/gi, '<ol style="padding-left:1.5rem;margin:1.25rem 0;color:#334155;line-height:1.75;">\n$1\n</ol>')
+    .replace(/<\/ol>\s*<ol[^>]*>/gi, '')
     // Bullet lists
     .replace(/^\s*[-*]\s+([^\n]+)/gim, '<li style="margin-bottom:0.35rem;">$1</li>')
     .replace(/(<li[\s\S]*?<\/li>)/gi, '<ul style="padding-left:1.25rem;margin:0.75rem 0;color:#334155;line-height:1.6;">$1</ul>')
@@ -223,7 +227,7 @@ export function convertMarkdownToEditorialHtml(markdown) {
     .map((b) => {
       const trimmed = b.trim();
       if (!trimmed) return '';
-      if (trimmed.startsWith('<h') || trimmed.startsWith('<div') || trimmed.startsWith('<ul') || trimmed.startsWith('<table')) {
+      if (trimmed.startsWith('<h') || trimmed.startsWith('<div') || trimmed.startsWith('<ul') || trimmed.startsWith('<ol') || trimmed.startsWith('<table')) {
         return trimmed;
       }
       return `<p style="margin-bottom:1rem;line-height:1.75;color:#334155;">${trimmed}</p>`;
