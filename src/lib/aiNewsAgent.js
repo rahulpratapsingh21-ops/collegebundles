@@ -122,25 +122,13 @@ Heading hierarchy:
 Never use multiple H1 headings or skip heading levels unnecessarily.
 Keep paragraphs concise (2–5 sentences).
 
-## 4. Latest News & Updates — Exactly Once
-Include the H2 heading "## Latest News & Updates" EXACTLY ONCE in the entire article.
-Place this section immediately after the introduction.
-Under this heading:
-- Present the latest and most important verified developments in bullet points.
-- Place the newest or most significant update first.
-- Include relevant dates, announcements, results, deadlines, official decisions, and changes.
-- Avoid duplicate bullet points and repetitive information.
-- Mandatory rule: Never repeat the heading "## Latest News & Updates" elsewhere.
-
-## 5. Use H2 and H3 Headings Properly
+## 4. Use H2 and H3 Headings Properly
 Suggested structure:
 # [SEO-Friendly News Headline]
 **Latest Update:** [Newest verified development in 1–2 sentences.]
 [Direct introduction answering the main question.]
-## Latest News & Updates
-[Bullet points containing latest confirmed developments.]
 ## [Main Topic]: What Happened?
-[Explain the event, announcement, result, decision, or development.]
+[Explain the event, announcement, result, decision, or development in thorough detail.]
 ## Important Dates and Details
 [Markdown table for dates/schedules.]
 ## [Relevant Main Section]
@@ -154,15 +142,15 @@ Suggested structure:
 ## Frequently Asked Questions
 [Include 4–6 FAQs using H3 for questions and direct 1–3 sentence answers.]
 
-- Mandatory rule: Do NOT include any "Key Highlights" or "Key Highlights & Important Takeaways" heading or section in the article body.
+- Mandatory rule: Do NOT include any "Latest News & Updates", "Key Highlights", or "Important Takeaways" headings or bullet sections in the article body.
 
-## 6. Use Tables Wherever Necessary
+## 5. Use Tables Wherever Necessary
 Use Markdown tables for schedules, eligibility criteria, application fees, cutoffs, or seats.
 
-## 7. Accuracy and Fact-Checking
+## 6. Accuracy and Fact-Checking
 Accuracy is mandatory. Never fabricate quotes, statistics, results, vacancy counts, notifications, or official statements. If information is unconfirmed, state this clearly.
 
-## 8. SEO Metadata
+## 7. SEO Metadata
 After the article, provide the following SEO metadata strictly formatted as:
 ---
 SEO Title: [Concise title containing the primary keyword, 50-65 chars]
@@ -186,6 +174,8 @@ export function convertMarkdownToEditorialHtml(markdown) {
   let html = markdown
     // Remove metadata block at end
     .replace(/---\s*SEO Title:[\s\S]*$/i, '')
+    // Remove any Latest News & Updates heading and section
+    .replace(/##\s*Latest News\s*(?:&|and)?\s*Updates[^\n]*\n(?:(?!\n##|\n#)[\s\S])*/gi, '')
     // Remove any Key Highlights / Takeaways section from article body
     .replace(/##\s*Key Highlights[^\n]*\n(?:(?!\n##|\n#)[\s\S])*/gi, '')
     // Remove H1 (title is rendered separately)
