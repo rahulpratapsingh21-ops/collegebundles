@@ -17,7 +17,8 @@ const STORAGE_KEYS = {
 };
 
 export const DEFAULT_AUTOMATION_SETTINGS = {
-  autoPublishMode: 'hybrid', // 'manual' | 'auto' | 'hybrid'
+  autoPublishMode: 'manual', // 'manual' | 'auto' | 'hybrid' (PAUSED per user request)
+  isPublishingPaused: true,  // Master switch to prevent any automatic publishing
   minSeoScore: 75,
   publishDelayMinutes: 0,
   fetchIntervalMinutes: 30,

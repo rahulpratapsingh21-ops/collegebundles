@@ -30,22 +30,25 @@ export async function runAutomationCycle() {
     const now = new Date();
 
     // ==========================================
-    // TASK 1: Check and Publish Scheduled Articles
+    // TASK 1: Check and Publish Scheduled Articles (Paused per user instruction)
     // ==========================================
-    for (const article of existingArticles) {
-      if (article.status === 'scheduled' && article.scheduledAt) {
-        const scheduledTime = new Date(article.scheduledAt);
-        if (scheduledTime <= now) {
-          article.status = 'published';
-          article.publishedAt = now.toISOString();
-          saveArticle(article);
-          results.scheduledPublishedCount++;
-          addAiLog({
-            task: 'Auto-Publish Scheduled Article',
-            inputReference: article.title,
-            result: `Article published live: ${article.slug}`,
-            status: 'success',
-          });
+    const isPaused = settings.isPublishingPaused !== false || settings.autoPublishMode === 'manual';
+    if (!isPaused) {
+      for (const article of existingArticles) {
+        if (article.status === 'scheduled' && article.scheduledAt) {
+          const scheduledTime = new Date(article.scheduledAt);
+          if (scheduledTime <= now) {
+            article.status = 'published';
+            article.publishedAt = now.toISOString();
+            saveArticle(article);
+            results.scheduledPublishedCount++;
+            addAiLog({
+              task: 'Auto-Publish Scheduled Article',
+              inputReference: article.title,
+              result: `Article published live: ${article.slug}`,
+              status: 'success',
+            });
+          }
         }
       }
     }

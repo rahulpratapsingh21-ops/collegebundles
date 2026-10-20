@@ -326,11 +326,16 @@ export async function processRssItemWithAi(rssItem, settings = {}, existingArtic
     article.seoIssues = seoValidation.issues;
     logTask('SEO Validation', `Score: ${seoValidation.score}/100 (${seoValidation.statusLabel})`);
 
-    // 12. Check Auto-Publish criteria
-    const autoPublishMode = settings.autoPublishMode || 'manual'; // 'manual' | 'auto' | 'hybrid'
+    // 12. Check Auto-Publish criteria (Paused by user request)
+    const isPaused = settings.isPublishingPaused !== false; // Default true: strictly paused
+    const autoPublishMode = settings.autoPublishMode || 'manual';
     const minSeoScore = settings.minSeoScore || 75;
 
-    if (autoPublishMode === 'auto' && seoValidation.score >= minSeoScore && article.status !== 'needs_review') {
+    if (isPaused || autoPublishMode === 'manual') {
+      // Keep as draft in queue; do not publish
+      article.status = 'ai_generated';
+      logTask('Auto-Publish Standby', 'Publishing paused per administrator instruction; saved safely as draft.');
+    } else if (autoPublishMode === 'auto' && seoValidation.score >= minSeoScore && article.status !== 'needs_review') {
       const delayMinutes = settings.publishDelayMinutes || 0;
       if (delayMinutes > 0) {
         article.status = 'scheduled';
