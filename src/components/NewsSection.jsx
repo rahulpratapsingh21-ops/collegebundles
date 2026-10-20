@@ -16,14 +16,17 @@ import {
 import { newsCategories, newsArticles } from '../data/newsData';
 
 export default function NewsSection({
+  articles = newsArticles,
   activeCategory,
   onSelectCategory,
   searchQuery,
   onOpenArticleModal,
   onOpenLeadModal
 }) {
+  const currentArticles = (articles && articles.length > 0) ? articles : newsArticles;
+
   // Filter articles based on active category and search query
-  const filteredArticles = newsArticles.filter((article) => {
+  const filteredArticles = currentArticles.filter((article) => {
     const matchesCategory =
       activeCategory === 'all' || article.categorySlug === activeCategory;
     const matchesSearch =
@@ -34,8 +37,10 @@ export default function NewsSection({
     return matchesCategory && matchesSearch;
   });
 
-  const featuredArticle = filteredArticles[0] || newsArticles[0];
-  const otherArticles = filteredArticles.slice(1);
+  // Limit to only 10 latest articles live on website
+  const limitedArticles = filteredArticles.slice(0, 10);
+  const featuredArticle = limitedArticles[0] || currentArticles[0];
+  const otherArticles = limitedArticles.slice(1, 10);
 
   const getCategoryBadgeClass = (categorySlug) => {
     switch (categorySlug) {

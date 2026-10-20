@@ -18,8 +18,14 @@ import FloatingWhatsApp from './components/FloatingWhatsApp';
 import LeadAdminDrawer from './components/LeadAdminDrawer';
 import Footer from './components/Footer';
 import { newsArticles } from './data/newsData';
+import { getPublishedArticles, getAllTickers, syncWithSupabaseCloud } from './lib/newsCmsStorage';
+import { startNewsScheduler, stopNewsScheduler } from './lib/newsScheduler';
 
 export default function App() {
+  // Dynamic Live News CMS Articles & Tickers
+  const [liveArticles, setLiveArticles] = useState(getPublishedArticles);
+  const [liveTickers, setLiveTickers] = useState(getAllTickers);
+
   // Navigation & Filter State
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -35,12 +41,45 @@ export default function App() {
   const [hasTriggeredScrollLead, setHasTriggeredScrollLead] = useState(false);
   const [isMobilePreview, setIsMobilePreview] = useState(false);
 
-  // Check if mobile simulation mode is requested: ?view=mobile
+  // Background Automation Scheduler & Event Listener
   useEffect(() => {
-    if (window.location.search.includes('view=mobile')) {
-      setIsMobilePreview(true);
-    }
+    // Initial cloud sync from Supabase
+    syncWithSupabaseCloud();
+
+    const handleNewsUpdate = () => {
+      setLiveArticles(getPublishedArticles());
+      setLiveTickers(getAllTickers());
+    };
+    window.addEventListener('cb_news_updated', handleNewsUpdate);
+
+    // Start background scheduler for RSS ingestion & publishing queue
+    startNewsScheduler(45);
+
+    return () => {
+      window.removeEventListener('cb_news_updated', handleNewsUpdate);
+      stopNewsScheduler();
+    };
   }, []);
+
+  // SEO Friendly URL & Slug Navigation Handler (/engineering/{slug} or #article={slug} or ?article={slug})
+  useEffect(() => {
+    const handleUrlRouting = () => {
+      const hash = window.location.hash;
+      const search = new URLSearchParams(window.location.search);
+      const articleSlug = search.get('article') || (hash.startsWith('#article=') ? hash.replace('#article=', '') : null);
+
+      if (articleSlug) {
+        const found = liveArticles.find((a) => a.slug === articleSlug || a.id === articleSlug);
+        if (found) {
+          setSelectedArticle(found);
+        }
+      }
+    };
+
+    handleUrlRouting();
+    window.addEventListener('hashchange', handleUrlRouting);
+    return () => window.removeEventListener('hashchange', handleUrlRouting);
+  }, [liveArticles]);
 
   // 65% Scroll Lead Form Popup Trigger (Respects user dismissal in session)
   useEffect(() => {
@@ -105,11 +144,11 @@ export default function App() {
   };
 
   const handleSelectArticleByTitle = (title) => {
-    const found = newsArticles.find((a) => a.title.toLowerCase().includes(title.toLowerCase().slice(0, 20)));
+    const found = liveArticles.find((a) => a.title.toLowerCase().includes(title.toLowerCase().slice(0, 20)));
     if (found) {
       setSelectedArticle(found);
     } else {
-      setSelectedArticle(newsArticles[0]);
+      setSelectedArticle(liveArticles[0] || newsArticles[0]);
     }
   };
 
@@ -140,7 +179,10 @@ export default function App() {
       />
 
       {/* 3. Real-Time Breaking News Ticker */}
-      <BreakingNewsTicker onSelectArticleByTitle={handleSelectArticleByTitle} />
+      <BreakingNewsTicker
+        tickers={liveTickers}
+        onSelectArticleByTitle={handleSelectArticleByTitle}
+      />
 
       <main style={{ flex: 1 }}>
         {/* 4. Hero Section with AI Banner, Stats & Direct Phone 8802155810 */}
@@ -159,6 +201,7 @@ export default function App() {
 
         {/* 6. Comprehensive News Section (Medical, Engineering, Management, Online) */}
         <NewsSection
+          articles={liveArticles}
           activeCategory={activeCategory}
           onSelectCategory={setActiveCategory}
           searchQuery={searchQuery}
@@ -237,6 +280,7 @@ export default function App() {
       <LeadAdminDrawer
         isOpen={isAdminDrawerOpen}
         onClose={() => setIsAdminDrawerOpen(false)}
+        onViewArticle={(art) => setSelectedArticle(art)}
       />
 
       {/* Success Feedback Toast */}

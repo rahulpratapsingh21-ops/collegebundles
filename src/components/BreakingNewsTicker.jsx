@@ -2,19 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { Radio, ChevronRight, Bell } from 'lucide-react';
 import { breakingNewsTickerItems } from '../data/newsData';
 
-export default function BreakingNewsTicker({ onSelectArticleByTitle }) {
+export default function BreakingNewsTicker({ tickers = breakingNewsTickerItems, onSelectArticleByTitle }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+
+  const currentTickers = (tickers && tickers.length > 0) ? tickers : breakingNewsTickerItems;
 
   useEffect(() => {
     if (isPaused) return;
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % breakingNewsTickerItems.length);
+      setCurrentIndex((prev) => (prev + 1) % currentTickers.length);
     }, 4500);
     return () => clearInterval(interval);
-  }, [isPaused]);
+  }, [isPaused, currentTickers.length]);
 
-  const activeItem = breakingNewsTickerItems[currentIndex];
+  const activeItem = currentTickers[currentIndex] || currentTickers[0];
 
   const getCategoryColor = (category) => {
     switch (category) {
