@@ -252,28 +252,47 @@ export async function callChatGptForNewsArticle({ topic, sourceContent, primaryK
 
   const prompt = buildUniversalSeoPrompt(topic, primaryKeyword, sourceContent, category);
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: model || 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an award-winning senior education news editor and Google News SEO specialist. You write authoritative, verified 1,200–1,400 word articles adhering strictly to journalistic guidelines without hallucinations.',
+  // Try Vite proxy endpoint first to bypass browser CORS, then fallback to direct API
+  const endpoints = ['/api/openai/v1/chat/completions', 'https://api.openai.com/v1/chat/completions'];
+  let response = null;
+  let lastErr = null;
+
+  for (const endpoint of endpoints) {
+    try {
+      response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
         },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.35, // Low temperature for high factual accuracy
-      max_tokens: 3500,
-    }),
-  });
+        body: JSON.stringify({
+          model: model || 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an award-winning senior education news editor and Google News SEO specialist. You write authoritative, verified 1,200–1,400 word articles adhering strictly to journalistic guidelines without hallucinations.',
+            },
+            {
+              role: 'user',
+              content: prompt,
+            },
+          ],
+          temperature: 0.35,
+          max_tokens: 3500,
+        }),
+      });
+
+      if (response && (response.ok || response.status === 401 || response.status === 429)) {
+        break;
+      }
+    } catch (e) {
+      lastErr = e;
+    }
+  }
+
+  if (!response) {
+    throw lastErr || new Error('Network error calling ChatGPT API');
+  }
 
   if (!response.ok) {
     const errData = await response.json().catch(() => ({}));
