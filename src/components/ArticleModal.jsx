@@ -239,40 +239,7 @@ export default function ArticleModal({
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
 
-          {/* Dates Table if provided and not already in HTML content */}
-          {(() => {
-            const hasHtmlTable = article.content && article.content.includes('<table');
-            const validDates = Array.isArray(article.datesTable)
-              ? article.datesTable.filter((r) => (r.event || r.milestone || r.Event) && (r.date || r.scheduledDate || r.Date))
-              : [];
-            if (hasHtmlTable || validDates.length === 0) return null;
 
-            return (
-              <div style={{ marginBottom: '2.5rem' }}>
-                <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: '#0f172a' }}>
-                  Important Dates & Counselling Timetable
-                </h3>
-                <div style={{ overflowX: 'auto', border: '1px solid #e2e8f0', borderRadius: '12px' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
-                    <thead>
-                      <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-                        <th style={{ padding: '0.75rem 1rem', color: '#475569', fontWeight: 600 }}>Event / Milestone</th>
-                        <th style={{ padding: '0.75rem 1rem', color: '#475569', fontWeight: 600 }}>Scheduled Date</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {validDates.map((row, idx) => (
-                        <tr key={idx} style={{ borderBottom: idx !== validDates.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
-                          <td style={{ padding: '0.75rem 1rem', fontWeight: 500 }}>{row.event || row.milestone || row.Event}</td>
-                          <td style={{ padding: '0.75rem 1rem', color: '#1d4ed8', fontWeight: 700 }}>{row.date || row.scheduledDate || row.Date}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            );
-          })()}
 
           {/* FAQs Accordion if provided and not already rendered in HTML */}
           {(() => {

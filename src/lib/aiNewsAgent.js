@@ -161,8 +161,9 @@ Follow this exact structure with rich, expansive paragraphs:
 
 - Mandatory rule: Do NOT include any "Latest News & Updates", "Key Highlights", or "Important Takeaways" headings or bullet sections in the article body.
 
-## 5. Use Tables Wherever Necessary
-Use Markdown tables for schedules, eligibility criteria, application fees, cutoffs, or seats.
+## 5. Use Tables Only When Specifically Needed
+- Include Markdown tables ONLY when the article topic specifically involves numerical schedules, counseling rounds, opening/closing cutoff ranks, fee structures, or eligibility comparisons.
+- Place tables naturally within their relevant analytical section in the body. Do NOT force a dates or timetable table if the news is a general announcement or non-counseling update. Never place dates tables artificially at the end.
 
 ## 6. Accuracy and Fact-Checking
 Accuracy is mandatory. Never fabricate quotes, statistics, results, vacancy counts, notifications, or official statements. If information is unconfirmed, state this clearly.
