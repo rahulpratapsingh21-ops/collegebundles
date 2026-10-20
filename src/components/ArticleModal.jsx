@@ -15,6 +15,8 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { getAllArticles } from '../lib/newsCmsStorage';
+import AuthorBioCard from './AuthorBioCard';
+import { getAuthorForCategory } from '../data/authorsData';
 
 export default function ArticleModal({ 
   article, 
@@ -50,6 +52,20 @@ export default function ArticleModal({
 
     return matches.slice(0, 3);
   }, [articlesList, article]);
+
+  // EEAT Author Profile for current article category
+  const currentAuthor = useMemo(() => {
+    return getAuthorForCategory(article?.category, article?.author);
+  }, [article?.category, article?.author]);
+
+  // Strip any trailing SEO Metadata section from article body
+  const sanitizedContent = useMemo(() => {
+    if (!article?.content) return '';
+    return article.content
+      .replace(/<h[1-6][^>]*>\s*(?:\d+\.?\s*)?SEO Metadata\s*<\/h[1-6]>[\s\S]*$/i, '')
+      .replace(/##\s*(?:\d+\.?\s*)?SEO Metadata[\s\S]*$/i, '')
+      .replace(/---\s*SEO Title:[\s\S]*$/i, '');
+  }, [article?.content]);
 
   if (!article) return null;
 
@@ -163,7 +179,7 @@ export default function ArticleModal({
             }}
           >
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-              <User size={14} color="#2563eb" /> {article.author}
+              <User size={14} color="#2563eb" /> {currentAuthor.name}
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
               <Calendar size={14} /> {article.date}
@@ -236,10 +252,8 @@ export default function ArticleModal({
               gap: '1rem',
               marginBottom: '2.5rem',
             }}
-            dangerouslySetInnerHTML={{ __html: article.content }}
+            dangerouslySetInnerHTML={{ __html: sanitizedContent }}
           />
-
-
 
           {/* FAQs Accordion if provided and not already rendered in HTML */}
           {(() => {
@@ -286,6 +300,9 @@ export default function ArticleModal({
               </div>
             );
           })()}
+
+          {/* About the Author (EEAT Bio Card) */}
+          <AuthorBioCard category={article.category} authorName={currentAuthor.name} />
 
           {/* Recommended Articles in Same Category (2 or 3 articles) */}
           {recommendedArticles.length > 0 && (

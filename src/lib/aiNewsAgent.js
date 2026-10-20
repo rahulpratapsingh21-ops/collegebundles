@@ -168,8 +168,9 @@ Follow this exact structure with rich, expansive paragraphs:
 ## 6. Accuracy and Fact-Checking
 Accuracy is mandatory. Never fabricate quotes, statistics, results, vacancy counts, notifications, or official statements. If information is unconfirmed, state this clearly.
 
-## 7. SEO Metadata
-After the article, provide the following SEO metadata strictly formatted as:
+## 7. SEO Metadata Block
+After the article, append SEO metadata ONLY between triple dashes below.
+CRITICAL MANDATORY INSTRUCTION: Do NOT write "SEO Metadata" or "## SEO Metadata" as an H2, H3, or any heading in the output. Only provide the key-value block:
 ---
 SEO Title: [Concise title containing the primary keyword, 50-65 chars]
 Meta Description: [Relevant description of 140–160 characters]
@@ -190,7 +191,10 @@ export function convertMarkdownToEditorialHtml(markdown) {
   if (!markdown) return '';
 
   let html = markdown
-    // Remove metadata block at end
+    // Remove metadata block at end and any SEO Metadata headings
+    .replace(/<h[1-6][^>]*>\s*(?:\d+\.?\s*)?SEO Metadata\s*<\/h[1-6]>[\s\S]*$/i, '')
+    .replace(/##+\s*(?:\d+\.?\s*)?SEO Metadata[\s\S]*$/i, '')
+    .replace(/(?:##\s*(?:\d+\.?\s*)?SEO Metadata\s*)?---\s*SEO Title:[\s\S]*$/i, '')
     .replace(/---\s*SEO Title:[\s\S]*$/i, '')
     // Remove any Latest News & Updates heading and section
     .replace(/##\s*Latest News\s*(?:&|and)?\s*Updates[^\n]*\n(?:(?!\n##|\n#)[\s\S])*/gi, '')
@@ -503,12 +507,12 @@ export async function processRssItemWithAi(rssItem, settings = {}, existingArtic
     const image = rssItem.imageUrl || getCategoryFallbackImage(category);
 
     const defaultAuthors = {
-      Medical: 'Dr. R. Sharma (Medical Admissions Advisor)',
-      Engineering: 'Er. A. K. Verma (Senior Tech Counsellor)',
-      Management: 'Prof. S. Mukherjee (MBA Strategy Expert)',
-      Online: 'Neha Bansal (Digital Learning Specialist)',
+      Medical: 'Dr. Aarav Mehta, MD',
+      Engineering: 'Er. Rohan Singhania',
+      Management: 'Pooja Deshmukh, MBA',
+      Online: 'Prof. Rajeshwari Sen',
     };
-    const author = rssItem.author || defaultAuthors[category] || 'CollegeBundles Editorial Desk';
+    const author = defaultAuthors[category] || rssItem.author || 'Dr. Vikrant Kashyap';
 
     // Assemble complete article object
     const article = {
