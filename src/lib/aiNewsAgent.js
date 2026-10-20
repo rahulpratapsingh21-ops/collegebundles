@@ -141,8 +141,6 @@ Suggested structure:
 [Bullet points containing latest confirmed developments.]
 ## [Main Topic]: What Happened?
 [Explain the event, announcement, result, decision, or development.]
-## Key Highlights
-[Summarize important information in bullet points.]
 ## Important Dates and Details
 [Markdown table for dates/schedules.]
 ## [Relevant Main Section]
@@ -155,6 +153,8 @@ Suggested structure:
 [Explain next confirmed step or expected development.]
 ## Frequently Asked Questions
 [Include 4–6 FAQs using H3 for questions and direct 1–3 sentence answers.]
+
+- Mandatory rule: Do NOT include any "Key Highlights" or "Key Highlights & Important Takeaways" heading or section in the article body.
 
 ## 6. Use Tables Wherever Necessary
 Use Markdown tables for schedules, eligibility criteria, application fees, cutoffs, or seats.
@@ -186,6 +186,8 @@ export function convertMarkdownToEditorialHtml(markdown) {
   let html = markdown
     // Remove metadata block at end
     .replace(/---\s*SEO Title:[\s\S]*$/i, '')
+    // Remove any Key Highlights / Takeaways section from article body
+    .replace(/##\s*Key Highlights[^\n]*\n(?:(?!\n##|\n#)[\s\S])*/gi, '')
     // Remove H1 (title is rendered separately)
     .replace(/^#\s+[^\n]+/m, '')
     // Bold Latest Update statement
