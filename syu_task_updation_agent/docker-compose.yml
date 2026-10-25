@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  syu-agent:
+    build: .
+    container_name: syu_automation_agent
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./uploads:/app/uploads
+    restart: unless-stopped

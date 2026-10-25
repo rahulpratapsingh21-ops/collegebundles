@@ -13,7 +13,7 @@ export default function ClientTestimonials({ onOpenAuditModal }) {
     {
       id: 1,
       quote:
-        'We faced an urgent Department of Education compliance audit with over 3,200 student course PDFs that lacked proper heading hierarchies, reading tags, and alt text. Rahul and the ABS Digital team remediated every single document into certified PDF/UA ISO standard in under 20 days. We passed with zero non-compliance marks.',
+        'ABS Digital remediated 3,200+ course PDFs into certified PDF/UA standards in under 20 days. We passed our compliance audit with zero defects.',
       name: 'Dr. Arvind Swaminathan',
       role: 'Dean of Academic Technology',
       organization: 'Premier Technical University System',
@@ -26,7 +26,7 @@ export default function ClientTestimonials({ onOpenAuditModal }) {
     {
       id: 2,
       quote:
-        'As prospective B2B buyers migrated from traditional search to ChatGPT and Perplexity, our organic search leads plateaued. ABS Digital audited our content corpus and implemented their proprietary LLMO & GEO framework. Within 6 weeks, our platform became the primary cited source in ChatGPT when users ask for enterprise workflow compliance.',
+        'ABS Digital implemented their LLMO & GEO framework on our site. Within 6 weeks, we became the primary cited source across ChatGPT and Perplexity.',
       name: 'Elena Rostova',
       role: 'VP of Global Growth & Search Strategy',
       organization: 'CloudScale Enterprise SaaS',
@@ -39,7 +39,7 @@ export default function ClientTestimonials({ onOpenAuditModal }) {
     {
       id: 3,
       quote:
-        'Remediating interactive Articulate Storyline 360 modules with branching quiz logic is notoriously painful. The engineering team at ABS Digital handled keyboard trap removal, screen reader announcements for JAWS and NVDA, and synchronized closed captions with extreme attention to detail. Our university partners praised the seamless accessibility.',
+        'ABS Digital resolved keyboard traps and screen reader compatibility across our interactive Articulate modules. Flawless accessibility and execution.',
       name: 'Marcus Vance',
       role: 'Head of Digital Curriculum & EdTech Production',
       organization: 'Apex Learning Global Media',
@@ -52,7 +52,7 @@ export default function ClientTestimonials({ onOpenAuditModal }) {
     {
       id: 4,
       quote:
-        'Facing an ADA Title III legal inquiry regarding our patient portal, ABS Digital conducted a thorough manual audit with blind screen-reader testers on JAWS, NVDA, and iOS VoiceOver. They provided an executive VPAT report and guided our developers in resolving 42 critical contrast and ARIA defects in just 10 days. Exceptional speed and expertise.',
+        'Facing an ADA inquiry on our patient portal, ABS Digital audited and resolved 42 critical defects in just 10 days. Exceptional speed and expertise.',
       name: 'Pooja Mehra',
       role: 'Chief Technology Officer',
       organization: 'CareMatrix Health Systems',
@@ -65,7 +65,7 @@ export default function ClientTestimonials({ onOpenAuditModal }) {
     {
       id: 5,
       quote:
-        'Our university district migrated to a modern Canvas LMS ecosystem, but faculty course shells were inconsistently formatted for low-vision and assistive technology learners. ABS Digital audited our navigation structures, standardized template color contrasts, and trained our instructional designers. Outstanding partner.',
+        'ABS Digital audited our Canvas LMS, standardized contrast templates, and trained our design team. An outstanding and dependable partner.',
       name: 'Michael Thornton',
       role: 'Director of Disability Support Services',
       organization: 'Metropolitan Community College District',
@@ -78,7 +78,7 @@ export default function ClientTestimonials({ onOpenAuditModal }) {
     {
       id: 6,
       quote:
-        'Their Hybrid Engine Optimization (HEO) strategy is truly next generation. We kept our #1 Google organic rank while capturing the new Google AI Overview snippet and Perplexity recommendation for our top 15 revenue-generating categories. Our inbound conversion volume has doubled.',
+        'Their Hybrid Engine Optimization doubled our inbound conversions, capturing top Google AI Overviews and Perplexity recommendations.',
       name: 'David Sterling',
       role: 'Director of E-Commerce & Omnichannel Growth',
       organization: 'Vanguard Retail Brands',

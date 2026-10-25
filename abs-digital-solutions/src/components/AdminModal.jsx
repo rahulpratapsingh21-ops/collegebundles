@@ -379,7 +379,7 @@ export default function AdminModal({ isOpen, onClose }) {
                       <input
                         type="text"
                         required
-                        placeholder="e.g. Rahul Singh"
+                        placeholder="Enter full name"
                         value={registerForm.fullName}
                         onChange={(e) => setRegisterForm({ ...registerForm, fullName: e.target.value })}
                         className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-slate-300 focus:border-[#0c5adb] focus:ring-1 focus:ring-[#0c5adb] outline-none"

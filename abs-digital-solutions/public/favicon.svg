@@ -1,24 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <defs>
-    <linearGradient id="absFaviconPink" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f43f5e" />
-      <stop offset="50%" stop-color="#ec4899" />
-      <stop offset="100%" stop-color="#fda4af" />
+    <linearGradient id="absFaviconBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c5adb" />
+      <stop offset="50%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#22d3ee" />
     </linearGradient>
   </defs>
   <rect width="100" height="100" rx="24" fill="#081120" />
   
-  <!-- Letter A Emblem in Light Pink -->
+  <!-- Letter A Emblem in Royal Blue & Cyan -->
   <path
     d="M26 80 L50 24 L74 80"
-    stroke="url(#absFaviconPink)"
+    stroke="url(#absFaviconBlue)"
     stroke-width="14"
     stroke-linecap="round"
     stroke-linejoin="round"
   />
   <path
     d="M36 58 L64 58"
-    stroke="#fbcfe8"
+    stroke="#67e8f9"
     stroke-width="10"
     stroke-linecap="round"
   />

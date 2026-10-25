@@ -23,7 +23,7 @@ import {
 import { fetchLeads, updateLeadStatus, deleteLead } from '../lib/supabaseClient';
 
 // Default Master Passcodes
-export const DEFAULT_ADMIN_PASSCODES = ['admin@2026', '8802155810', 'admin8802'];
+export const DEFAULT_ADMIN_PASSCODES = ['College@2026', 'admin123', 'admin@2026', '8802155810', 'admin8802'];
 
 export function getValidPasscodes() {
   const custom = localStorage.getItem('cb_admin_custom_pin');

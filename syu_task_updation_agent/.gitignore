@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+browser_session/
+debug_archive/
+*.png
+frames_*/
+detailed_*/
+syu_sheet_exported_*.csv
+cloudflared.exe
+*.exe
+*.xlsx
+uploads/
+

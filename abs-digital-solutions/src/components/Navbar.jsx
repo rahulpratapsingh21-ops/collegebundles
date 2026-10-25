@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import Logo from './Logo';
 
-export default function Navbar({ onOpenAuditModal }) {
+export default function Navbar({ onOpenAuditModal, currentView = 'home', onNavigate }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
@@ -58,6 +58,16 @@ export default function Navbar({ onOpenAuditModal }) {
 
   const scrollToSection = (id) => {
     setMobileMenuOpen(false);
+    if (currentView !== 'home' && onNavigate) {
+      onNavigate('home');
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+      return;
+    }
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -136,7 +146,10 @@ export default function Navbar({ onOpenAuditModal }) {
         <div className="abs-container flex items-center justify-between">
           {/* Logo */}
           <div
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            onClick={() => {
+              if (onNavigate) onNavigate('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
             style={{ cursor: 'pointer' }}
           >
             <Logo />
@@ -323,8 +336,12 @@ export default function Navbar({ onOpenAuditModal }) {
             </button>
 
             <button
-              onClick={() => scrollToSection('contact-audit')}
-              className="text-slate-700 hover:text-[#0c5adb] font-semibold text-xs tracking-wide uppercase transition-colors cursor-pointer"
+              onClick={() => onNavigate && onNavigate('contact')}
+              className={`font-semibold text-xs tracking-wide uppercase transition-colors cursor-pointer py-1 px-2.5 rounded-lg ${
+                currentView === 'contact'
+                  ? 'bg-[#0c5adb] text-white shadow-sm'
+                  : 'text-slate-700 hover:text-[#0c5adb]'
+              }`}
               style={{ whiteSpace: 'nowrap', cursor: 'pointer' }}
             >
               Contact
@@ -546,10 +563,15 @@ export default function Navbar({ onOpenAuditModal }) {
               </button>
 
               <button
-                onClick={() => scrollToSection('contact-audit')}
-                className="flex items-center justify-between py-2.5 text-slate-800 font-semibold border-b border-slate-100 text-left cursor-pointer"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  if (onNavigate) onNavigate('contact');
+                }}
+                className={`flex items-center justify-between py-2.5 font-semibold border-b border-slate-100 text-left cursor-pointer ${
+                  currentView === 'contact' ? 'text-[#0c5adb]' : 'text-slate-800'
+                }`}
               >
-                <span>Contact &amp; Office Address</span>
+                <span>Contact Us (Office &amp; Map)</span>
                 <ArrowRight className="w-4 h-4 text-slate-400" />
               </button>
 

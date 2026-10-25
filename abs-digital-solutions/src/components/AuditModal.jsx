@@ -112,7 +112,7 @@ export default function AuditModal({ isOpen, onClose, defaultService = 'WCAG Acc
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Rahul Singh"
+                  placeholder="Enter your full name"
                   value={formData.fullName}
                   onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                   className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-slate-300 focus:border-[#0c5adb] outline-none"
@@ -127,7 +127,7 @@ export default function AuditModal({ isOpen, onClose, defaultService = 'WCAG Acc
                   <input
                     type="tel"
                     required
-                    placeholder="e.g. 9286185258"
+                    placeholder="Phone / WhatsApp number"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-slate-300 focus:border-[#0c5adb] outline-none"
@@ -139,7 +139,7 @@ export default function AuditModal({ isOpen, onClose, defaultService = 'WCAG Acc
                   </label>
                   <input
                     type="email"
-                    placeholder="rahul@company.com"
+                    placeholder="name@company.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-slate-300 focus:border-[#0c5adb] outline-none"

@@ -13,6 +13,7 @@ import FloatingWhatsApp from './components/FloatingWhatsApp';
 import Footer from './components/Footer';
 import AdminModal from './components/AdminModal';
 import AuditModal from './components/AuditModal';
+import ContactUsPage from './components/ContactUsPage';
 import { checkAdminExists } from './lib/supabaseClient';
 import { Phone, MessageSquare, CheckCircle2 } from 'lucide-react';
 
@@ -22,6 +23,57 @@ export default function App() {
   const [selectedService, setSelectedService] = useState('WCAG Accessibility Testing & Auditing');
   const [hasAdmin, setHasAdmin] = useState(true);
   const [toastNotification, setToastNotification] = useState(null);
+
+  const getInitialView = () => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      if (
+        path === '/contact' ||
+        path === '/contact-us' ||
+        hash === '#contact' ||
+        hash === '#contact-us'
+      ) {
+        return 'contact';
+      }
+    }
+    return 'home';
+  };
+
+  const [currentView, setCurrentView] = useState(getInitialView);
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      if (
+        path === '/contact' ||
+        path === '/contact-us' ||
+        hash === '#contact' ||
+        hash === '#contact-us'
+      ) {
+        setCurrentView('contact');
+      } else {
+        setCurrentView('home');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const handleNavigate = (view) => {
+    setCurrentView(view);
+    if (typeof window !== 'undefined') {
+      if (view === 'contact') {
+        window.history.pushState({ view: 'contact' }, '', '/contact');
+      } else {
+        window.history.pushState({ view: 'home' }, '', '/');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   // Initial check if admin exists for footer badge
   useEffect(() => {
@@ -62,44 +114,59 @@ export default function App() {
       )}
 
       {/* Main Navbar (Fixed and stands permanently at top) */}
-      <Navbar onOpenAuditModal={() => handleOpenAuditModal('General Consultation')} />
+      <Navbar
+        onOpenAuditModal={() => handleOpenAuditModal('General Consultation')}
+        currentView={currentView}
+        onNavigate={handleNavigate}
+      />
 
       {/* Fixed Navbar Spacer so content is never covered */}
       <div style={{ height: '105px' }} className="hidden md:block w-full shrink-0" aria-hidden="true" />
       <div style={{ height: '72px' }} className="md:hidden w-full shrink-0" aria-hidden="true" />
 
-      {/* Main Page Flow */}
+      {/* Main Page Flow: Conditional between Home and Contact Us */}
       <main className="flex-1">
-        {/* 1. Hero Banner with High-Tech 3D Image & High-Converting CTAs */}
-        <HeroBanner onOpenAuditModal={handleOpenAuditModal} />
+        {currentView === 'contact' ? (
+          <ContactUsPage
+            onNavigateHome={() => handleNavigate('home')}
+            onLeadSuccess={handleLeadSuccess}
+          />
+        ) : (
+          <>
+            {/* 1. Hero Banner with High-Tech 3D Image & High-Converting CTAs */}
+            <HeroBanner onOpenAuditModal={handleOpenAuditModal} />
 
-        {/* 2. Ratings (Google 4.9, Clutch 4.8, GoodFirms 4.9) & Trusted by Global Brands (Magic Software, etc.) */}
-        <TrustedBrandsRating />
+            {/* 2. Ratings & Trusted by Global Brands */}
+            <TrustedBrandsRating />
 
-        {/* 3. Digital Accessibility Solutions (5 Core Services) */}
-        <AccessibilitySolutions onSelectService={handleOpenAuditModal} />
+            {/* 3. Digital Accessibility Solutions (5 Core Services) */}
+            <AccessibilitySolutions onSelectService={handleOpenAuditModal} />
 
-        {/* 4. AI SEO & Next-Gen Search (LLMO, GEO, AEO, HEO, Web Dev) */}
-        <AiSeoServices onSelectService={handleOpenAuditModal} />
+            {/* 4. AI SEO & Next-Gen Search (LLMO, GEO, AEO, HEO, Web Dev) */}
+            <AiSeoServices onSelectService={handleOpenAuditModal} />
 
-        {/* 5. Client Testimonials (Real Client Faces & Verified Outcomes) */}
-        <ClientTestimonials onOpenAuditModal={handleOpenAuditModal} />
+            {/* 5. Client Testimonials (Real Client Faces & Verified Outcomes) */}
+            <ClientTestimonials onOpenAuditModal={handleOpenAuditModal} />
 
-        {/* 6. Blog & Industry Guides ("What to Read Next" Focusing on Services) */}
-        <BlogSection onOpenAuditModal={handleOpenAuditModal} />
+            {/* 6. Blog & Industry Guides */}
+            <BlogSection onOpenAuditModal={handleOpenAuditModal} />
 
-        {/* 7. Why Choose Us & Quality Guarantee */}
-        <WhyChooseUs onOpenAuditModal={() => handleOpenAuditModal('Full Enterprise Strategy')} />
+            {/* 7. Why Choose Us & Quality Guarantee */}
+            <WhyChooseUs onOpenAuditModal={() => handleOpenAuditModal('Full Enterprise Strategy')} />
 
-        {/* 8. Dedicated Main Lead & Contact Section */}
-        <LeadSection
-          preselectedService={selectedService}
-          onLeadSuccess={handleLeadSuccess}
-        />
+            {/* 8. Dedicated Main Lead & Contact Section */}
+            <LeadSection
+              preselectedService={selectedService}
+              onLeadSuccess={handleLeadSuccess}
+            />
+          </>
+        )}
       </main>
 
-      {/* 50% Website Scrolling Lead Form Popup */}
-      <ScrollLeadPopup onLeadSuccess={handleLeadSuccess} />
+      {/* 50% Website Scrolling Lead Form Popup (Disabled on Contact Us page) */}
+      {currentView !== 'contact' && (
+        <ScrollLeadPopup onLeadSuccess={handleLeadSuccess} />
+      )}
 
       {/* Floating WhatsApp Action Button */}
       <FloatingWhatsApp />
@@ -146,6 +213,7 @@ export default function App() {
         onOpenAdminModal={() => setIsAdminModalOpen(true)}
         onOpenAuditModal={() => handleOpenAuditModal('Footer Audit Request')}
         hasAdmin={hasAdmin}
+        onNavigate={handleNavigate}
       />
 
       {/* Admin Panel Modal (One-time registration lockout + Lead viewer) */}

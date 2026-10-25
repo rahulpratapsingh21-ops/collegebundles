@@ -12,14 +12,17 @@ import {
 } from 'lucide-react';
 import Logo from './Logo';
 
-export default function Footer({ onOpenAdminModal, onOpenAuditModal, hasAdmin }) {
+export default function Footer({ onOpenAdminModal, onOpenAuditModal, hasAdmin, onNavigate }) {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const scrollTo = (id) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    if (onNavigate) onNavigate('home');
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
   return (
@@ -31,7 +34,13 @@ export default function Footer({ onOpenAdminModal, onOpenAuditModal, hasAdmin })
           
           {/* Brand & Corporate Overview (Col 4) */}
           <div className="lg:col-span-4 space-y-4">
-            <div onClick={scrollToTop}>
+            <div
+              onClick={() => {
+                if (onNavigate) onNavigate('home');
+                scrollToTop();
+              }}
+              className="cursor-pointer inline-block"
+            >
               <Logo variant="white" />
             </div>
             
@@ -188,6 +197,16 @@ export default function Footer({ onOpenAdminModal, onOpenAuditModal, hasAdmin })
                   What to Read Next (Guides)
                 </button>
               </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => onNavigate && onNavigate('contact')}
+                  className="footer-link"
+                  style={{ color: '#34d399', fontWeight: 700 }}
+                >
+                  📍 Contact Us (Office &amp; Map)
+                </button>
+              </li>
             </ul>
           </div>
 
@@ -225,10 +244,18 @@ export default function Footer({ onOpenAdminModal, onOpenAuditModal, hasAdmin })
               </div>
             </div>
 
-            <div className="pt-2">
+            <div className="pt-2 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => onNavigate && onNavigate('contact')}
+                className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-bold border border-slate-700 transition cursor-pointer"
+              >
+                <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                <span>View Contact Page &amp; Google Map</span>
+              </button>
               <button
                 onClick={onOpenAuditModal}
-                className="w-full btn-orange text-xs py-2.5 px-4 font-bold rounded-lg shadow-md"
+                className="w-full btn-orange text-xs py-2.5 px-4 font-bold rounded-lg shadow-md cursor-pointer"
               >
                 Request Free 24h Audit
               </button>

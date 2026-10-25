@@ -1,0 +1,32 @@
+name: Deploy ABS Digital Solutions
+
+on:
+  push:
+    paths:
+      - "abs-digital-solutions/**"
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies (ABS)
+        working-directory: abs-digital-solutions
+        run: npm ci
+
+      - name: Build ABS
+        working-directory: abs-digital-solutions
+        run: npm run build
+
+      - name: Deploy via FTP
+        working-directory: abs-digital-solutions
+        run: node deploy.mjs

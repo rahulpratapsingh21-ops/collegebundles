@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYU Task Automation Studio | CMS Agent</title>
+  <meta name="description" content="Autonomous Task and SubTask Creation and Updation Studio for SelectYourUniversity CMS">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="theme-light">
+  <div class="app-container">
+    
+    <!-- Top Navigation Bar -->
+    <header class="app-header">
+      <div class="brand-group">
+        <img src="/static/img/syu-logo.png" alt="Select Your University" class="brand-logo-img">
+        <div class="brand-text">
+          <h1>SYU Automation Studio</h1>
+          <span class="brand-subtitle">CMS Task & Subtask Autonomous Agent</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="live-network-btn" id="liveNetworkBtn" title="Live Access Anywhere" aria-label="Live Access Anywhere">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <span>Live Anywhere</span>
+        </button>
+        <div class="status-pill" id="agentStatusPill">
+          <span class="status-dot idle" id="statusDot"></span>
+          <span class="status-label" id="statusText">System Ready</span>
+        </div>
+        <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Toggle Theme">
+          <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Live Anywhere Modal -->
+    <div class="live-modal-backdrop" id="liveModal" style="display: none;">
+      <div class="live-modal-card glass-card">
+        <div class="modal-header">
+          <div class="card-title-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+          </div>
+          <div>
+            <h3>Access Agent Live Anywhere</h3>
+            <p class="modal-subtitle">Open this dashboard on any phone, laptop, or team member's computer.</p>
+          </div>
+          <button class="close-modal-btn" id="closeLiveModalBtn">&times;</button>
+        </div>
+        
+        <div class="live-url-list">
+          <!-- Public Worldwide Link -->
+          <div class="live-url-item highlight-card">
+            <div class="live-url-badge">WORLDWIDE PUBLIC (4G/5G/ANYWHERE)</div>
+            <div class="live-url-box">
+              <span class="url-text" id="publicUrlText">Connecting to Cloudflare...</span>
+              <button class="copy-url-btn" onclick="copyUrl('publicUrlText')">Copy</button>
+            </div>
+            <small class="live-url-hint">Works anywhere in the world on any phone or laptop. No install required!</small>
+          </div>
+
+          <!-- Local Network Wi-Fi Link -->
+          <div class="live-url-item">
+            <div class="live-url-badge-sub">SAME WI-FI / LOCAL NETWORK</div>
+            <div class="live-url-box">
+              <span class="url-text" id="networkUrlText">http://192.168.1.10:5000</span>
+              <button class="copy-url-btn" onclick="copyUrl('networkUrlText')">Copy</button>
+            </div>
+            <small class="live-url-hint">Open on any phone or laptop connected to the same office/home Wi-Fi.</small>
+          </div>
+
+          <!-- Localhost -->
+          <div class="live-url-item">
+            <div class="live-url-badge-sub">LOCAL COMPUTER</div>
+            <div class="live-url-box">
+              <span class="url-text" id="localUrlText">http://localhost:5000</span>
+              <button class="copy-url-btn" onclick="copyUrl('localUrlText')">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Studio Grid -->
+    <main class="studio-grid">
+      
+      <!-- LEFT COLUMN: Input Configuration & Row Picker -->
+      <section class="config-column" aria-label="Agent Configuration">
+        
+        <!-- CARD 1: Excel / Google Sheet Source -->
+        <div class="glass-card source-card">
+          <div class="card-header">
+            <div class="card-title-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="9" y1="21" x2="9" y2="9"></line>
+              </svg>
+            </div>
+            <h2>1. Provide Excel Sheet</h2>
+          </div>
+
+          <div class="source-toggle-tabs">
+            <button class="tab-btn active" id="tabGoogleSheetBtn">Google Sheet URL</button>
+            <button class="tab-btn" id="tabUploadFileBtn">Upload File (.xlsx / .csv)</button>
+          </div>
+
+          <!-- Tab Content: Google Sheet URL -->
+          <div class="tab-content" id="googleSheetContent">
+            <div class="input-field-group">
+              <label for="sheetUrlInput">Live Google Sheet Link</label>
+              <div class="input-with-button">
+                <input type="text" id="sheetUrlInput" placeholder="https://docs.google.com/spreadsheets/d/..." value="http://docs.google.com/spreadsheets/d/1bsGKL667kifcVDHeWK35Edb0juxoRvNUDsFWiQVE2zc/edit?gid=0#gid=0">
+                <button class="action-btn-sm" id="loadSheetBtn">
+                  <span>Load</span>
+                </button>
+              </div>
+              <small class="helper-text">Task IDs will be automatically updated into Column E of this sheet.</small>
+            </div>
+          </div>
+
+          <!-- Tab Content: File Upload -->
+          <div class="tab-content hidden" id="uploadFileContent">
+            <div class="upload-dropzone" id="uploadDropzone">
+              <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" class="hidden-file-input">
+              <div class="dropzone-inner">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <p>Drag & Drop your Excel/CSV file here or <span class="highlight">browse</span></p>
+                <span class="file-format-hint">Supports .xlsx, .xls, .csv</span>
+              </div>
+            </div>
+            <div class="uploaded-file-banner hidden" id="uploadedFileBanner">
+              <span id="uploadedFileName"></span>
+              <button class="clear-file-btn" id="clearFileBtn" title="Remove file">&times;</button>
+            </div>
+          </div>
+
+          <!-- Sheet Status Badge -->
+          <div class="sheet-status-summary" id="sheetSummaryBox">
+            <div class="summary-stat">
+              <span class="stat-label">Total Rows</span>
+              <span class="stat-value" id="statTotalRows">--</span>
+            </div>
+            <div class="summary-stat">
+              <span class="stat-label">Sheet Range</span>
+              <span class="stat-value" id="statSheetRange">Rows 2 to ...</span>
+            </div>
+            <div class="summary-stat">
+              <span class="stat-label">Status</span>
+              <span class="stat-badge connected" id="statConnection">Ready</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 2: "From Where To Start" Controller -->
+        <div class="glass-card controller-card">
+          <div class="card-header">
+            <div class="card-title-icon highlight-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <h2>2. Where Do You Want to Start?</h2>
+          </div>
+
+          <!-- Starting Row Input -->
+          <div class="input-field-group">
+            <div class="label-row">
+              <label for="startRowInput">Starting Row Number in Excel</label>
+              <span class="label-hint">Specify exact row number</span>
+            </div>
+            <div class="row-stepper-box">
+              <button class="stepper-btn" id="stepperDownBtn" aria-label="Decrease Row">-</button>
+              <input type="number" id="startRowInput" min="2" max="50000" value="1560">
+              <button class="stepper-btn" id="stepperUpBtn" aria-label="Increase Row">+</button>
+              <button class="preview-btn" id="previewRowBtn" title="Inspect this row's data">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <span>Preview</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Row Preview Card -->
+          <div class="row-preview-container" id="rowPreviewContainer">
+            <div class="preview-header">
+              <span class="preview-tag mode-tag" id="previewModeTag">UPDATION</span>
+              <span class="preview-row-id" id="previewRowTitle">Row #1560 Preview</span>
+            </div>
+            <div class="preview-title" id="previewNewsTitle">Loading task details...</div>
+            <div class="preview-grid">
+              <div class="preview-item">
+                <span class="p-label">Category:</span>
+                <span class="p-value" id="previewCategory">--</span>
+              </div>
+              <div class="preview-item">
+                <span class="p-label">Target Page Tab:</span>
+                <span class="p-value" id="previewTab">--</span>
+              </div>
+              <div class="preview-item">
+                <span class="p-label">Writer:</span>
+                <span class="p-value" id="previewWriter">--</span>
+              </div>
+              <div class="preview-item">
+                <span class="p-label">Editor:</span>
+                <span class="p-value" id="previewEditor">--</span>
+              </div>
+            </div>
+            <div class="preview-url-box" id="previewUrlBox">
+              <span class="p-label">Detected URL:</span>
+              <a href="#" target="_blank" id="previewLiveUrlLink" class="preview-url-text">--</a>
+            </div>
+          </div>
+
+          <!-- SUBTASK TABS CONFIGURATION -->
+          <div class="input-field-group new-task-tabs-box" id="newTaskTabsBox">
+            <div class="label-row">
+              <label>Subtask Tabs to Create in CMS <span class="badge-hint" id="tabsCategoryBadge">Colleges</span></label>
+              <div class="tabs-quick-actions" id="tabsQuickActions">
+                <button type="button" class="text-btn" id="selectAllTabsBtn">Select All</button>
+                <span class="dot-sep">•</span>
+                <button type="button" class="text-btn" id="overviewOnlyTabsBtn">Overview Only</button>
+              </div>
+            </div>
+            <p class="field-hint-text" id="tabsExplorationHint">Select which tabs you want the agent to create as subtasks for this new entity:</p>
+            <div class="tab-checkboxes-grid" id="tabCheckboxesGrid">
+              <!-- Dynamically populated from CMS explored tabs -->
+            </div>
+            <div class="tabs-selected-summary" id="tabsSelectedSummary">
+              <span>Selected: <strong id="tabsSelectedCount">1</strong> tab(s) will be created in CMS</span>
+            </div>
+          </div>
+
+          <!-- Batch Count Selector -->
+          <div class="input-field-group">
+            <label>How Many Rows to Process?</label>
+            <div class="pill-group" id="batchPills">
+              <button class="pill-btn active" data-count="1">1 Row (Single)</button>
+              <button class="pill-btn" data-count="5">5 Rows</button>
+              <button class="pill-btn" data-count="10">10 Rows</button>
+              <button class="pill-btn" data-count="all">All Remaining</button>
+            </div>
+          </div>
+
+          <!-- Execution Settings -->
+          <div class="execution-settings-row">
+            <div class="toggle-option">
+              <input type="checkbox" id="headlessToggle">
+              <label for="headlessToggle">Run in background (Leave unchecked to watch browser actions live on screen)</label>
+            </div>
+          </div>
+
+          <!-- Big Launch CTA Buttons -->
+          <div class="launch-actions">
+            <button class="primary-launch-btn" id="startAgentBtn">
+              <div class="btn-glow-layer"></div>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              <span>Launch SYU Agent</span>
+            </button>
+            <button class="danger-stop-btn hidden" id="stopAgentBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <rect x="6" y="6" width="12" height="12"></rect>
+              </svg>
+              <span>Stop Execution</span>
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- RIGHT COLUMN: Control Tower & Live Progress -->
+      <section class="tower-column" aria-label="Agent Control Tower">
+        
+        <!-- Current Progress Card -->
+        <div class="glass-card progress-card">
+          <div class="card-header progress-card-header">
+            <div>
+              <h2>Live Agent Monitor</h2>
+              <p class="current-task-name" id="currentTaskDisplay">Agent ready. Select starting row and launch.</p>
+            </div>
+            <div class="progress-percent-badge" id="progressPercentBadge">0%</div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progressBarFill" style="width: 0%;"></div>
+          </div>
+
+          <!-- Live Step Stepper -->
+          <div class="stepper-workflow">
+            <div class="step-item" id="step1">
+              <div class="step-dot">1</div>
+              <span class="step-text">Live Metadata</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step-item" id="step2">
+              <div class="step-dot">2</div>
+              <span class="step-text">CMS Login</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step-item" id="step3">
+              <div class="step-dot">3</div>
+              <span class="step-text">Main Task (H1/Entity)</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step-item" id="step4">
+              <div class="step-dot">4</div>
+              <span class="step-text">SubTask (Mandatory: No)</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step-item" id="step5">
+              <div class="step-dot">5</div>
+              <span class="step-text">Sheet Updated</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terminal Console Card -->
+        <div class="glass-card terminal-card">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="t-dot red"></span>
+              <span class="t-dot yellow"></span>
+              <span class="t-dot green"></span>
+            </div>
+            <div class="terminal-title">LIVE AGENT CONSOLE OUTPUT</div>
+            <div class="terminal-actions">
+              <button class="clear-terminal-btn" id="clearLogsBtn">Clear</button>
+            </div>
+          </div>
+          <div class="terminal-body" id="terminalLogs">
+            <div class="log-line system">[SYSTEM] SYU Autonomous Agent Studio initialized.</div>
+            <div class="log-line info">[READY] Please select your starting row number and click "Launch SYU Agent".</div>
+          </div>
+        </div>
+
+        <!-- Recently Processed Tasks Table Card -->
+        <div class="glass-card table-card">
+          <div class="card-header">
+            <h2>Processed Tasks Log</h2>
+            <div class="table-header-right">
+              <button class="clear-table-btn" id="clearProcessedTasksBtn" title="Clear Processed Tasks Log">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+                </svg>
+                <span>Clear</span>
+              </button>
+              <span class="count-badge" id="processedCountBadge">0 Tasks</span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="styled-table" id="processedTasksTable">
+              <thead>
+                <tr>
+                  <th>Row #</th>
+                  <th>Task Title</th>
+                  <th>Mode</th>
+                  <th>Task ID</th>
+                  <th>SubTask Status</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody id="processedTasksTbody">
+                <tr class="empty-row" id="emptyTablePlaceholder">
+                  <td colspan="6">No tasks processed in this session yet.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
