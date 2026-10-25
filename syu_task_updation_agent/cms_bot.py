@@ -701,23 +701,26 @@ class SYUCmsBot:
             else:
                 print(f"  [SubTask {s_idx}] Blog subtask: Page is automatically set to 'Blog Content'.")
 
-            # 4. Mandatory: No (User requirement: in subtask Mandatory will be No)
+            # 4. Mandatory: No (User requirement: in subtask Mandatory will ALWAYS be No)
             try:
                 mand_wrapper = self.page.locator("div.form-field-wrapper:has(label:has-text('Mandatory')), div.form-field-wrapper:has(label:has-text('MANDATORY'))").first
                 if mand_wrapper.is_visible():
-                    sel = mand_wrapper.locator(".select__single-value").first
-                    if not sel.is_visible() or sel.inner_text().strip().lower() != "no":
-                        print(f"  [SubTask {s_idx}] Setting Mandatory to 'No'...")
-                        mand_wrapper.locator(".select__control").first.click()
-                        time.sleep(0.3)
-                        no_opt = self.page.locator("div[class*='-option']:text-is('No'), div[class*='-option']:has-text('No')").first
-                        if no_opt.is_visible():
-                            no_opt.click()
-                        else:
-                            self.page.keyboard.press("ArrowDown")
-                            time.sleep(0.2)
-                            self.page.keyboard.press("Enter")
-                        time.sleep(0.3)
+                    print(f"  [SubTask {s_idx}] Setting Mandatory dropdown to 'No'...")
+                    mand_control = mand_wrapper.locator(".select__control").first
+                    mand_control.scroll_into_view_if_needed()
+                    mand_control.click()
+                    time.sleep(0.4)
+                    
+                    # Direct click on 'No' option
+                    no_opt = self.page.locator("div[class*='-option']:text-is('No'), div[class*='-option']:has-text('No')").first
+                    if no_opt.is_visible():
+                        no_opt.click()
+                    else:
+                        self.page.keyboard.press("ArrowDown")
+                        time.sleep(0.2)
+                        self.page.keyboard.press("Enter")
+                    time.sleep(0.3)
+                    print(f"  [SubTask {s_idx}] Mandatory successfully verified as 'No'!")
             except Exception as e:
                 print(f"  [Warn] Mandatory field error: {e}")
 
