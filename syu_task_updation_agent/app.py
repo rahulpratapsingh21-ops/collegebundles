@@ -265,9 +265,20 @@ def run_agent_thread(start_row, count_val, headless=False, source=None, selected
                 row_num = task_item["row_number"]
                 agent_state["current_row"] = row_num
                 agent_state["current_task"] = task_item["title"]
-                agent_state["progress_percent"] = int(((idx - 1) / total_count) * 100)
-                agent_state["step"] = "processing_task"
+                agent_state["step"] = "metadata"
                 agent_state["step_description"] = f"Processing Row #{row_num}: {task_item['title'][:45]}..."
+
+                def make_step_callback(cur_idx, total_cnt):
+                    def cb(step_key, step_desc, percent_offset):
+                        base_percent = ((cur_idx - 1) / total_cnt) * 100
+                        item_share = 100 / total_cnt
+                        overall_percent = int(base_percent + (percent_offset * item_share / 100))
+                        agent_state["step"] = step_key
+                        agent_state["step_description"] = step_desc
+                        agent_state["progress_percent"] = min(99 if percent_offset < 100 else 100, max(1, overall_percent))
+                    return cb
+
+                step_cb = make_step_callback(idx, total_count)
 
                 print(f"\n============================================================")
                 print(f"[Agent UI] Processing Row #{row_num} ({idx}/{total_count})")
@@ -277,7 +288,7 @@ def run_agent_thread(start_row, count_val, headless=False, source=None, selected
                 if selected_tabs:
                     task_item["selected_tabs"] = selected_tabs
 
-                task_id = bot.process_task_automatically(task_item)
+                task_id = bot.process_task_automatically(task_item, step_callback=step_cb)
 
                 record = {
                     "row_number": row_num,

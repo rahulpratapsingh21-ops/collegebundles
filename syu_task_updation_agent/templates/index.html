@@ -300,13 +300,87 @@
         <div class="glass-card progress-card">
           <div class="card-header progress-card-header">
             <div>
-              <h2>Live Agent Monitor</h2>
+              <div class="monitor-title-row">
+                <h2>Live Agent Monitor</h2>
+                <span class="manzil-badge">मंजिल की ओर 🏃‍♂️</span>
+              </div>
               <p class="current-task-name" id="currentTaskDisplay">Agent ready. Select starting row and launch.</p>
             </div>
             <div class="progress-percent-badge" id="progressPercentBadge">0%</div>
           </div>
 
-          <!-- Progress Bar -->
+          <!-- Animated Road to Manzil (मंजिल की राह) -->
+          <div class="manzil-road-wrapper" id="manzilRoadWrapper">
+            <!-- Road Track -->
+            <div class="manzil-road-track">
+              <div class="manzil-road-surface"></div>
+              <div class="manzil-road-line"></div>
+              <div class="manzil-progress-glow" id="manzilProgressGlow" style="width: 0%;"></div>
+
+              <!-- Start Flag -->
+              <div class="manzil-start-flag" title="Starting Point">
+                <span class="flag-icon">🏁</span>
+                <span class="flag-text">Start</span>
+              </div>
+
+              <!-- Moving Walker Character (Walking Man to Manzil) -->
+              <div class="manzil-walker" id="manzilWalker" style="left: 0%;">
+                <!-- Floating speech bubble -->
+                <div class="manzil-bubble" id="manzilBubble">मंजिल की ओर... 🎒</div>
+                
+                <!-- Animated Man Character SVG -->
+                <svg class="walker-svg" viewBox="0 0 64 64" width="48" height="48">
+                  <!-- Dust / Sparkles Behind Feet -->
+                  <g class="walker-dust-group">
+                    <circle cx="8" cy="56" r="2.5" class="walker-dust dust-1" />
+                    <circle cx="4" cy="53" r="1.8" class="walker-dust dust-2" />
+                    <circle cx="12" cy="57" r="1.5" class="walker-dust dust-3" />
+                  </g>
+                  
+                  <g class="walker-body-group">
+                    <!-- Back Arm -->
+                    <line x1="28" y1="28" x2="18" y2="40" class="walker-limb arm-back" stroke-linecap="round" />
+                    <!-- Left Leg (Back) -->
+                    <line x1="29" y1="38" x2="21" y2="56" class="walker-limb leg-left" stroke-linecap="round" />
+                    <!-- Right Leg (Front) -->
+                    <line x1="33" y1="38" x2="43" y2="56" class="walker-limb leg-right" stroke-linecap="round" />
+                    <!-- Torso / Jacket -->
+                    <rect x="25" y="24" width="12" height="16" rx="4" class="walker-torso" />
+                    <!-- Tie / Collar Detail -->
+                    <polygon points="31,24 33,24 32,32" fill="#ff2a6d" />
+                    <!-- Backpack -->
+                    <rect x="18" y="25" width="7" height="13" rx="3" class="walker-backpack" />
+                    <!-- Head -->
+                    <circle cx="31" cy="15" r="7.5" class="walker-head" />
+                    <!-- Cap -->
+                    <path d="M23 14 Q31 7 40 12 Q44 14 42 16 L23 16 Z" class="walker-cap" />
+                    <!-- Eye -->
+                    <circle cx="35" cy="14.5" r="1.2" class="walker-eye" />
+                    <!-- Smile -->
+                    <path d="M33 18 Q36 20 38 18" stroke="#1f2937" stroke-width="1.2" fill="none" stroke-linecap="round" />
+                    <!-- Front Arm -->
+                    <line x1="33" y1="28" x2="44" y2="39" class="walker-limb arm-front" stroke-linecap="round" />
+                  </g>
+                </svg>
+              </div>
+
+              <!-- Destination: मंजिल (Trophy & Victory Flag) -->
+              <div class="manzil-destination" id="manzilDestination" title="मंजिल (Final Destination)">
+                <div class="manzil-trophy-glow"></div>
+                <div class="manzil-trophy-pedestal">
+                  <div class="trophy-bounce-box">
+                    <span class="trophy-emoji">🏆</span>
+                    <span class="trophy-stars">✨</span>
+                  </div>
+                  <div class="manzil-banner">
+                    <span class="manzil-banner-text">मंजिल 🎯</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress Bar Fill Track -->
           <div class="progress-bar-track">
             <div class="progress-bar-fill" id="progressBarFill" style="width: 0%;"></div>
           </div>
@@ -325,7 +399,7 @@
             <div class="step-connector"></div>
             <div class="step-item" id="step3">
               <div class="step-dot">3</div>
-              <span class="step-text">Main Task (H1/Entity)</span>
+              <span class="step-text">Main Task</span>
             </div>
             <div class="step-connector"></div>
             <div class="step-item" id="step4">
@@ -335,7 +409,7 @@
             <div class="step-connector"></div>
             <div class="step-item" id="step5">
               <div class="step-dot">5</div>
-              <span class="step-text">Sheet Updated</span>
+              <span class="step-text">मंजिल (Sheet Updated) 🏆</span>
             </div>
           </div>
         </div>

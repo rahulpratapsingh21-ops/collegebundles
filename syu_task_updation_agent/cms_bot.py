@@ -17,10 +17,10 @@ class SYUCmsBot:
     def start(self):
         print("[CMS Bot] Launching visible browser on desktop...")
         self.playwright = sync_playwright().start()
-        # Launch visible browser window with slow_mo so user can watch actions clearly
+        # Launch visible browser window with fast snappy actions (35ms instead of 150ms)
         self.browser = self.playwright.chromium.launch(
             headless=self.headless,
-            slow_mo=150,
+            slow_mo=35 if not self.headless else 0,
             args=["--start-maximized"]
         )
         self.context = self.browser.new_context(viewport={"width": 1440, "height": 900})
@@ -72,15 +72,15 @@ class SYUCmsBot:
             control.click()
             time.sleep(0.4)
 
-            # Type search query (use first 35 chars for Entity to trigger fast dropdown filter)
-            query_to_type = str(search_val)[:35] if label_name == "Entity" else str(search_val)
+            # Type search query (use first 18 chars for Entity/Blog For to trigger fast dropdown filter)
+            query_to_type = str(search_val)[:18] if label_name in ["Entity", "Blog For"] else str(search_val)
             inp = wrapper.locator("input.select__input, input.css-1hac4vs-dummyInput, input").first
             try:
-                inp.type(query_to_type, delay=35)
-                time.sleep(0.8)
+                inp.type(query_to_type, delay=15)
+                time.sleep(0.4)
             except Exception:
-                self.page.keyboard.type(query_to_type, delay=35)
-                time.sleep(0.8)
+                self.page.keyboard.type(query_to_type, delay=15)
+                time.sleep(0.4)
 
             all_opts = self.page.locator("div[class*='-option']").all()
 
@@ -391,7 +391,7 @@ class SYUCmsBot:
             return None
         return None
 
-    def process_task_automatically(self, item):
+    def process_task_automatically(self, item, step_callback=None):
         """
         AUTONOMOUS DECISION & VISIBLE EXECUTION:
         0. Checks CMS if task exists:
@@ -432,19 +432,29 @@ class SYUCmsBot:
         writer_email = config.resolve_person_self_learning(raw_writer, role="writer")
         editor_email = config.resolve_person_self_learning(raw_editor, role="editor")
 
+        if step_callback:
+            step_callback("metadata", f"Extracted Live Metadata for '{clean_title[:35]}'", 20)
+
         # -------------------------------------------------------------
         # STEP 0: Check if an existing task already exists in CMS
         # -------------------------------------------------------------
+        if step_callback:
+            step_callback("logging_in", f"Checking CMS for existing task '{clean_title[:30]}'...", 35)
+
         existing_check = self.check_existing_task_in_cms(item, classification)
         task_id = ""
         task_page_url = ""
 
         if existing_check and existing_check.get("action") == "reuse":
             reused_id = existing_check["task_id"]
+            if step_callback:
+                step_callback("sheet_update", f"Reusing Open Task #{reused_id}. Updating Google Sheet...", 90)
             sheet_url = item.get("sheet_url") or "https://docs.google.com/spreadsheets/d/1PSc-TNUTrR9CvJpvtEyIUSm532SSJCzEHmfzaNSWKYA/edit#gid=0"
             row_num = item.get("row_number") or (item.get("row_index", 0) + 2)
             if row_num:
                 self.update_google_sheet_cell(sheet_url, row_num, reused_id)
+            if step_callback:
+                step_callback("completed", f"मंजिल प्राप्त! Task #{reused_id} Reused & Sheet Updated!", 100)
             return reused_id
 
         elif existing_check and existing_check.get("action") == "create_subtasks":
@@ -456,6 +466,8 @@ class SYUCmsBot:
             # -------------------------------------------------------------
             # STAGE 1: Main Task Creation (/admin/collections/tasks/create)
             # -------------------------------------------------------------
+            if step_callback:
+                step_callback("main_task", f"Creating Main Task '{clean_title[:32]}' in CMS...", 55)
             print("\n>>> [STAGE 1] Creating Main Task in CMS...")
             self.page.goto(config.CMS_CREATE_TASK_URL, wait_until="domcontentloaded")
             time.sleep(2)
@@ -648,6 +660,9 @@ class SYUCmsBot:
         print(f"  [Task Page] Current Task URL: {task_page_url}")
 
         for s_idx, target_tab in enumerate(tabs_to_create, 1):
+            if step_callback:
+                sub_pct = 70 + int((s_idx / len(tabs_to_create)) * 18)
+                step_callback("subtasks", f"Creating SubTask {s_idx}/{len(tabs_to_create)}: '{target_tab}' (Mandatory: No)...", sub_pct)
             print(f"\n------------------------------------------------------------")
             print(f"  [SubTask {s_idx}/{len(tabs_to_create)}] Creating SubTask for Page Tab: '{target_tab}'")
             print(f"------------------------------------------------------------")
@@ -811,6 +826,11 @@ class SYUCmsBot:
             sheet_url = item.get("sheet_url") or "https://docs.google.com/spreadsheets/d/1PSc-TNUTrR9CvJpvtEyIUSm532SSJCzEHmfzaNSWKYA/edit#gid=0"
             row_num = item.get("row_number") or (item.get("row_index", 0) + 2)
             if row_num:
+                if step_callback:
+                    step_callback("sheet_update", f"Writing Task ID #{task_id} into Google Sheet Row #{row_num} Column E...", 95)
                 self.update_google_sheet_cell(sheet_url, row_num, task_id)
+
+            if step_callback:
+                step_callback("completed", f"मंजिल प्राप्त! Task #{task_id} successfully created and linked!", 100)
 
         return task_id

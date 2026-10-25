@@ -468,7 +468,58 @@ document.addEventListener("DOMContentLoaded", () => {
     statusText.textContent = text;
   }
 
+  const manzilWalker = document.getElementById("manzilWalker");
+  const manzilBubble = document.getElementById("manzilBubble");
+  const manzilProgressGlow = document.getElementById("manzilProgressGlow");
+
   // --- 7. Status Polling & Stepper Updates ---
+  function updateManzilProgress(state) {
+    if (!manzilWalker) return;
+    const percent = Math.min(100, Math.max(0, state.progress_percent || 0));
+    
+    // Scale walker position along the track (0% to 92%)
+    const walkerPos = Math.min(92, percent * 0.92);
+    manzilWalker.style.left = `${walkerPos}%`;
+    if (manzilProgressGlow) manzilProgressGlow.style.width = `${Math.min(100, percent)}%`;
+
+    if (state.is_running) {
+      if (percent >= 100 || state.step === "completed") {
+        manzilWalker.classList.remove("is-walking");
+        manzilWalker.classList.add("is-celebrating");
+        if (manzilBubble) manzilBubble.textContent = "मंजिल पूरी हुई! 🏆🎉";
+      } else {
+        manzilWalker.classList.add("is-walking");
+        manzilWalker.classList.remove("is-celebrating");
+        
+        // Context-aware playful speech bubbles
+        if (manzilBubble) {
+          if (state.step === "starting" || state.step === "metadata") {
+            manzilBubble.textContent = "पेज की खोज... 🔍";
+          } else if (state.step === "logging_in") {
+            manzilBubble.textContent = "CMS में एंट्री! 🔑";
+          } else if (state.step === "main_task" || state.step === "processing_task") {
+            manzilBubble.textContent = "Main Task बन रहा है... ⚡";
+          } else if (state.step === "subtasks") {
+            manzilBubble.textContent = "SubTasks (Mandatory: No) 📝";
+          } else if (state.step === "sheet_update") {
+            manzilBubble.textContent = "Google Sheet अपडेट! 📊";
+          } else {
+            manzilBubble.textContent = `मंजिल की ओर (${percent}%) 🏃‍♂️`;
+          }
+        }
+      }
+    } else {
+      if (percent >= 100 || state.step === "completed") {
+        manzilWalker.classList.remove("is-walking");
+        manzilWalker.classList.add("is-celebrating");
+        if (manzilBubble) manzilBubble.textContent = "मंजिल पूरी हुई! 🏆🎉";
+      } else {
+        manzilWalker.classList.remove("is-walking", "is-celebrating");
+        if (manzilBubble) manzilBubble.textContent = "मंजिल की ओर... 🎒";
+      }
+    }
+  }
+
   function startStatusPolling() {
     if (statusPollInterval) clearInterval(statusPollInterval);
     statusPollInterval = setInterval(async () => {
@@ -482,6 +533,7 @@ document.addEventListener("DOMContentLoaded", () => {
           progressBarFill.style.width = `${state.progress_percent}%`;
 
           updateStepper(state.step);
+          updateManzilProgress(state);
           updateProcessedTable(state.processed_tasks);
 
           if (!state.is_running) {
@@ -491,7 +543,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch (err) {
         console.error("Status poll error:", err);
       }
-    }, 1500);
+    }, 900);
   }
 
   function updateStepper(stepName) {
@@ -501,15 +553,28 @@ document.addEventListener("DOMContentLoaded", () => {
       if (el) el.className = "step-item";
     });
 
-    if (stepName === "starting" || stepName === "logging_in") {
-      document.getElementById("step1").classList.add("active");
-    } else if (stepName === "processing_task") {
-      document.getElementById("step1").classList.add("completed");
-      document.getElementById("step2").classList.add("completed");
-      document.getElementById("step3").classList.add("active");
-      document.getElementById("step4").classList.add("active");
+    if (stepName === "starting" || stepName === "metadata") {
+      document.getElementById("step1")?.classList.add("active");
+    } else if (stepName === "logging_in") {
+      document.getElementById("step1")?.classList.add("completed");
+      document.getElementById("step2")?.classList.add("active");
+    } else if (stepName === "main_task" || stepName === "processing_task") {
+      document.getElementById("step1")?.classList.add("completed");
+      document.getElementById("step2")?.classList.add("completed");
+      document.getElementById("step3")?.classList.add("active");
+    } else if (stepName === "subtasks") {
+      document.getElementById("step1")?.classList.add("completed");
+      document.getElementById("step2")?.classList.add("completed");
+      document.getElementById("step3")?.classList.add("completed");
+      document.getElementById("step4")?.classList.add("active");
+    } else if (stepName === "sheet_update") {
+      document.getElementById("step1")?.classList.add("completed");
+      document.getElementById("step2")?.classList.add("completed");
+      document.getElementById("step3")?.classList.add("completed");
+      document.getElementById("step4")?.classList.add("completed");
+      document.getElementById("step5")?.classList.add("active");
     } else if (stepName === "completed") {
-      steps.forEach(s => document.getElementById(s).classList.add("completed"));
+      steps.forEach(s => document.getElementById(s)?.classList.add("completed"));
     }
   }
 

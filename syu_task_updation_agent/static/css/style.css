@@ -845,19 +845,397 @@ body {
   font-family: var(--font-mono);
 }
 
+.monitor-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.manzil-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, rgba(255, 42, 109, 0.2), rgba(255, 183, 3, 0.25));
+  color: #ffb703;
+  border: 1px solid rgba(255, 183, 3, 0.4);
+  letter-spacing: 0.03em;
+  animation: manzilBadgePulse 2.5s infinite ease-in-out;
+}
+
+@keyframes manzilBadgePulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(255, 183, 3, 0); }
+  50% { transform: scale(1.04); box-shadow: 0 0 12px rgba(255, 183, 3, 0.35); }
+}
+
+/* ========================================================
+   ANIMATED ROAD TO MANZIL (मंजिल की राह & WALKING MAN)
+   ======================================================== */
+.manzil-road-wrapper {
+  position: relative;
+  width: 100%;
+  margin: 18px 0 10px 0;
+  padding: 28px 12px 14px 12px;
+  background: linear-gradient(180deg, rgba(15, 20, 34, 0.6) 0%, rgba(10, 14, 26, 0.85) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  overflow: visible;
+  box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+.manzil-road-track {
+  position: relative;
+  width: 100%;
+  height: 52px;
+  display: flex;
+  align-items: flex-end;
+}
+
+/* Road surface & markings */
+.manzil-road-surface {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 14px;
+  background: linear-gradient(90deg, #1e293b, #0f172a);
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.manzil-road-line {
+  position: absolute;
+  bottom: 6px;
+  left: 28px;
+  right: 48px;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.35) 0, rgba(255, 255, 255, 0.35) 10px, transparent 10px, transparent 20px);
+  z-index: 2;
+}
+
+.manzil-progress-glow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 14px;
+  background: linear-gradient(90deg, #ff2a6d, #05d9e8, #ffb703);
+  border-radius: 7px;
+  opacity: 0.65;
+  box-shadow: 0 0 16px rgba(5, 217, 232, 0.5);
+  transition: width 0.9s cubic-bezier(0.34, 1.25, 0.64, 1);
+  z-index: 1;
+}
+
+/* Starting Flag */
+.manzil-start-flag {
+  position: absolute;
+  bottom: 12px;
+  left: -2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 3;
+}
+
+.flag-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.flag-text {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* Destination: मंजिल (Trophy & Pedestal) */
+.manzil-destination {
+  position: absolute;
+  bottom: 4px;
+  right: -6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+  transition: transform 0.4s ease;
+}
+
+.manzil-trophy-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  background: radial-gradient(circle, rgba(255, 183, 3, 0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: trophyHalo 2.5s infinite ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes trophyHalo {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.5; }
+  50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.9; }
+}
+
+.trophy-bounce-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trophy-emoji {
+  font-size: 1.85rem;
+  line-height: 1;
+  display: inline-block;
+  filter: drop-shadow(0 0 10px rgba(255, 183, 3, 0.6));
+  animation: trophyFloat 3s infinite ease-in-out;
+}
+
+@keyframes trophyFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(3deg); }
+}
+
+.trophy-stars {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 0.85rem;
+  animation: starSparkle 1.8s infinite ease-in-out;
+}
+
+@keyframes starSparkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.7) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(45deg); }
+}
+
+.manzil-banner {
+  background: linear-gradient(135deg, #ffb703 0%, #fb8500 100%);
+  color: #0f1422;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 6px;
+  margin-top: 2px;
+  box-shadow: 0 2px 8px rgba(251, 133, 0, 0.4);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+/* ========================================================
+   THE WALKING MAN (मंजिल की ओर बढ़ता हुआ पात्र)
+   ======================================================== */
+.manzil-walker {
+  position: absolute;
+  bottom: 8px;
+  left: 0%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  transition: left 0.9s cubic-bezier(0.34, 1.25, 0.64, 1);
+  will-change: left;
+}
+
+/* Speech Bubble above the walking man */
+.manzil-bubble {
+  position: relative;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--accent-pink);
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(255, 42, 109, 0.25);
+  margin-bottom: 2px;
+  transform: translateY(-2px);
+  animation: bubbleFloat 2.2s infinite ease-in-out alternate;
+  transition: all 0.3s ease;
+}
+
+.manzil-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--accent-pink);
+}
+
+@keyframes bubbleFloat {
+  0% { transform: translateY(-2px); }
+  100% { transform: translateY(-6px); }
+}
+
+/* SVG Character Styling */
+.walker-svg {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.45));
+  overflow: visible;
+}
+
+.walker-limb {
+  stroke: var(--text-primary);
+  stroke-width: 3.8;
+  transform-origin: 31px 38px;
+}
+
+.walker-torso {
+  fill: #05d9e8;
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 1;
+}
+
+.walker-backpack {
+  fill: #ffb703;
+  stroke: rgba(0, 0, 0, 0.25);
+  stroke-width: 1;
+}
+
+.walker-head {
+  fill: #ffdfba;
+  stroke: rgba(0, 0, 0, 0.15);
+  stroke-width: 1;
+}
+
+.walker-cap {
+  fill: #ff2a6d;
+}
+
+.walker-eye {
+  fill: #1f2937;
+}
+
+.walker-dust {
+  fill: rgba(5, 217, 232, 0.6);
+  opacity: 0;
+}
+
+/* Idle Breathing */
+.manzil-walker:not(.is-walking):not(.is-celebrating) .walker-body-group {
+  animation: idleBreathe 2s infinite ease-in-out alternate;
+}
+
+@keyframes idleBreathe {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-2px); }
+}
+
+/* ACTIVE WALKING ANIMATIONS (When Agent is Running!) */
+.manzil-walker.is-walking .walker-body-group {
+  animation: walkerBobbing 0.45s infinite ease-in-out alternate;
+}
+
+.manzil-walker.is-walking .leg-left {
+  animation: walkStrideLeft 0.5s infinite ease-in-out;
+}
+
+.manzil-walker.is-walking .leg-right {
+  animation: walkStrideRight 0.5s infinite ease-in-out;
+}
+
+.manzil-walker.is-walking .arm-front {
+  animation: armSwingFront 0.5s infinite ease-in-out;
+}
+
+.manzil-walker.is-walking .arm-back {
+  animation: armSwingBack 0.5s infinite ease-in-out;
+}
+
+.manzil-walker.is-walking .walker-dust-group {
+  animation: dustPop 0.5s infinite ease-out;
+}
+
+@keyframes walkerBobbing {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-3px) rotate(1deg); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes walkStrideLeft {
+  0%, 100% { transform: rotate(26deg); }
+  50% { transform: rotate(-26deg); }
+}
+
+@keyframes walkStrideRight {
+  0%, 100% { transform: rotate(-26deg); }
+  50% { transform: rotate(26deg); }
+}
+
+@keyframes armSwingFront {
+  0%, 100% { transform: rotate(-28deg); }
+  50% { transform: rotate(28deg); }
+}
+
+@keyframes armSwingBack {
+  0%, 100% { transform: rotate(28deg); }
+  50% { transform: rotate(-28deg); }
+}
+
+@keyframes dustPop {
+  0% { opacity: 0.9; transform: scale(0.6) translateX(0); }
+  100% { opacity: 0; transform: scale(1.6) translateX(-10px); }
+}
+
+/* CELEBRATION ON REACHING MANZIL! (100%) */
+.manzil-walker.is-celebrating .walker-body-group {
+  animation: celebrationJump 0.65s infinite ease-in-out alternate;
+}
+
+.manzil-walker.is-celebrating .arm-front,
+.manzil-walker.is-celebrating .arm-back {
+  transform: rotate(-130deg);
+  transition: transform 0.4s ease;
+}
+
+.manzil-walker.is-celebrating .manzil-bubble {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #34d399;
+  color: #ffffff;
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.45);
+  animation: victoryBubble 0.8s infinite ease-in-out alternate;
+}
+
+.manzil-walker.is-celebrating .manzil-bubble::after {
+  border-top-color: #059669;
+}
+
+@keyframes celebrationJump {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-14px); }
+}
+
+@keyframes victoryBubble {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.08); }
+}
+
+/* Progress Fill Bar */
 .progress-bar-track {
   width: 100%;
-  height: 8px;
+  height: 6px;
   background: var(--bg-secondary);
   border-radius: 4px;
   overflow: hidden;
+  margin-top: 6px;
 }
 
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent-pink), var(--accent-blue));
+  background: linear-gradient(90deg, var(--accent-pink), var(--accent-blue), #ffb703);
   border-radius: 4px;
-  transition: width 0.4s ease;
+  transition: width 0.9s ease;
 }
 
 /* Stepper Workflow */
