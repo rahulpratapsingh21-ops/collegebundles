@@ -81,7 +81,11 @@ document.addEventListener("DOMContentLoaded", () => {
     googleSheetContent.classList.remove("hidden");
     uploadFileContent.classList.add("hidden");
     currentSource = sheetUrlInput.value.trim();
-    loadSheetInfo(currentSource);
+    if (currentSource) {
+      loadSheetInfo(currentSource);
+    } else {
+      loadSheetInfo("");
+    }
   });
 
   tabUploadFileBtn.addEventListener("click", () => {
@@ -94,10 +98,23 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- 3. Sheet Loading & Inspection ---
   loadSheetBtn.addEventListener("click", () => {
     currentSource = sheetUrlInput.value.trim();
+    if (!currentSource) {
+      alert("Please paste a Google Sheet link first!");
+      sheetUrlInput.focus();
+      return;
+    }
     loadSheetInfo(currentSource);
   });
 
   async function loadSheetInfo(sourceUrl) {
+    if (!sourceUrl) {
+      statConnection.textContent = "No Sheet";
+      statConnection.className = "stat-badge";
+      statTotalRows.textContent = "--";
+      statSheetRange.textContent = "No Sheet Connected";
+      previewCurrentRow();
+      return;
+    }
     statConnection.textContent = "Loading...";
     statConnection.className = "stat-badge";
     try {
@@ -211,6 +228,22 @@ document.addEventListener("DOMContentLoaded", () => {
   async function previewCurrentRow() {
     const rowNum = parseInt(startRowInput.value) || 2;
     previewRowTitle.textContent = `Row #${rowNum} Preview`;
+
+    if (!currentSource) {
+      previewNewsTitle.textContent = "Please paste your Google Sheet link above and click 'Load'.";
+      previewModeTag.textContent = "WAITING";
+      previewModeTag.className = "preview-tag";
+      previewCategory.textContent = "--";
+      previewTab.textContent = "--";
+      previewWriter.textContent = "--";
+      previewEditor.textContent = "--";
+      previewLiveUrlLink.textContent = "None";
+      previewLiveUrlLink.removeAttribute("href");
+      const grid = document.getElementById("tabCheckboxesGrid");
+      if (grid) grid.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:8px 0;">No sheet connected yet. Paste link above.</div>';
+      return;
+    }
+
     previewNewsTitle.textContent = "Loading row details...";
 
     try {
@@ -364,6 +397,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- 6. Launch & Stop Agent ---
   startAgentBtn.addEventListener("click", async () => {
+    currentSource = currentSource || sheetUrlInput.value.trim();
+    if (!currentSource) {
+      alert("Please enter a Google Sheet URL or upload a file first!");
+      sheetUrlInput.focus();
+      return;
+    }
+
     const startRow = parseInt(startRowInput.value) || 2;
     const isHeadless = headlessToggle ? headlessToggle.checked : false;
     const selectedTabs = getSelectedSubtaskTabs();
@@ -617,6 +657,10 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Initial Sheet Load & Preview
-  loadSheetInfo(currentSource);
+  if (currentSource) {
+    loadSheetInfo(currentSource);
+  } else {
+    loadSheetInfo("");
+  }
   fetchNetworkInfo();
 });

@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PSc-TNUTrR9CvJpvtEyIUSm532SSJCzEHmfzaNSWKYA/edit?gid=0#gid=0"
+DEFAULT_SHEET_URL = ""
 
 # Global State
 agent_state = {
@@ -31,7 +31,7 @@ agent_state = {
     "progress_percent": 0,
     "step": "idle",
     "step_description": "Agent is idle. Ready to launch.",
-    "current_source": DEFAULT_SHEET_URL,
+    "current_source": "",
     "sheet_info": None,
     "processed_tasks": [],
     "logs": []
@@ -68,7 +68,9 @@ def get_sheet_manager(source_path_or_url=None):
     global cached_sheet_manager
     with sheet_lock:
         if not source_path_or_url:
-            source_path_or_url = agent_state["current_source"]
+            source_path_or_url = agent_state.get("current_source")
+        if not source_path_or_url:
+            raise ValueError("No Google Sheet link provided. Please paste your sheet link and click Load.")
         if cached_sheet_manager is None or cached_sheet_manager.source != source_path_or_url:
             cached_sheet_manager = SheetManager(source_path_or_url)
         return cached_sheet_manager
@@ -79,7 +81,9 @@ def index():
 
 @app.route("/api/sheet-info", methods=["GET"])
 def get_sheet_info():
-    source = request.args.get("source", agent_state["current_source"]).strip()
+    source = (request.args.get("source") or agent_state.get("current_source") or "").strip()
+    if not source:
+        return jsonify({"success": False, "error": "Please provide a Google Sheet link or upload an Excel file."}), 400
     try:
         sm = get_sheet_manager(source)
         cols = list(sm.df.columns)
@@ -158,7 +162,9 @@ def get_category_tabs():
 @app.route("/api/preview-row", methods=["GET"])
 def preview_row():
     row_num = request.args.get("row_number", type=int)
-    source = request.args.get("source", agent_state["current_source"]).strip()
+    source = (request.args.get("source") or agent_state.get("current_source") or "").strip()
+    if not source:
+        return jsonify({"success": False, "error": "No sheet connected. Please paste your Google Sheet link first."}), 400
     if not row_num:
         return jsonify({"success": False, "error": "Missing row_number"}), 400
 
@@ -310,10 +316,13 @@ def start_agent():
         return jsonify({"success": False, "error": "Agent is already running!"}), 400
 
     data = request.json or {}
-    start_row = data.get("start_row", 1560)
+    source = (data.get("source") or agent_state.get("current_source") or "").strip()
+    if not source:
+        return jsonify({"success": False, "error": "Please provide a Google Sheet link or upload an Excel file first!"}), 400
+
+    start_row = data.get("start_row", 2)
     count = data.get("count", 1)
     headless = data.get("headless", False)
-    source = data.get("source", agent_state["current_source"])
 
     count_val = None if str(count).lower() == "all" else int(count)
     selected_tabs = data.get("selected_tabs")
