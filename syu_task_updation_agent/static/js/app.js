@@ -486,25 +486,25 @@ document.addEventListener("DOMContentLoaded", () => {
       if (percent >= 100 || state.step === "completed") {
         manzilWalker.classList.remove("is-walking");
         manzilWalker.classList.add("is-celebrating");
-        if (manzilBubble) manzilBubble.textContent = "मंजिल पूरी हुई! 🏆🎉";
+        if (manzilBubble) manzilBubble.textContent = "Goal Reached! 🏆🎉";
       } else {
         manzilWalker.classList.add("is-walking");
         manzilWalker.classList.remove("is-celebrating");
         
-        // Context-aware playful speech bubbles
+        // Context-aware playful speech bubbles in English
         if (manzilBubble) {
           if (state.step === "starting" || state.step === "metadata") {
-            manzilBubble.textContent = "पेज की खोज... 🔍";
+            manzilBubble.textContent = "Inspecting Live Page... 🔍";
           } else if (state.step === "logging_in") {
-            manzilBubble.textContent = "CMS में एंट्री! 🔑";
+            manzilBubble.textContent = "Logging into CMS... 🔑";
           } else if (state.step === "main_task" || state.step === "processing_task") {
-            manzilBubble.textContent = "Main Task बन रहा है... ⚡";
+            manzilBubble.textContent = "Creating Main Task... ⚡";
           } else if (state.step === "subtasks") {
             manzilBubble.textContent = "SubTasks (Mandatory: No) 📝";
           } else if (state.step === "sheet_update") {
-            manzilBubble.textContent = "Google Sheet अपडेट! 📊";
+            manzilBubble.textContent = "Updating Google Sheet... 📊";
           } else {
-            manzilBubble.textContent = `मंजिल की ओर (${percent}%) 🏃‍♂️`;
+            manzilBubble.textContent = `Heading to Goal (${percent}%) 🏃‍♂️`;
           }
         }
       }
@@ -512,10 +512,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (percent >= 100 || state.step === "completed") {
         manzilWalker.classList.remove("is-walking");
         manzilWalker.classList.add("is-celebrating");
-        if (manzilBubble) manzilBubble.textContent = "मंजिल पूरी हुई! 🏆🎉";
+        if (manzilBubble) manzilBubble.textContent = "Goal Reached! 🏆🎉";
       } else {
         manzilWalker.classList.remove("is-walking", "is-celebrating");
-        if (manzilBubble) manzilBubble.textContent = "मंजिल की ओर... 🎒";
+        if (manzilBubble) manzilBubble.textContent = "Ready to Go... 🎒";
       }
     }
   }

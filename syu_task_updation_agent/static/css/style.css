@@ -869,7 +869,7 @@ body {
 }
 
 /* ========================================================
-   ANIMATED ROAD TO MANZIL (मंजिल की राह & WALKING MAN)
+   ANIMATED ROAD TO DESTINATION & WALKING MAN
    ======================================================== */
 .manzil-road-wrapper {
   position: relative;
@@ -950,7 +950,7 @@ body {
   text-transform: uppercase;
 }
 
-/* Destination: मंजिल (Trophy & Pedestal) */
+/* Destination (Trophy & Pedestal) */
 .manzil-destination {
   position: absolute;
   bottom: 4px;
@@ -1027,7 +1027,7 @@ body {
 }
 
 /* ========================================================
-   THE WALKING MAN (मंजिल की ओर बढ़ता हुआ पात्र)
+   THE WALKING MAN (Moving towards Destination)
    ======================================================== */
 .manzil-walker {
   position: absolute;

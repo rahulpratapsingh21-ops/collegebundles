@@ -454,7 +454,7 @@ class SYUCmsBot:
             if row_num:
                 self.update_google_sheet_cell(sheet_url, row_num, reused_id)
             if step_callback:
-                step_callback("completed", f"मंजिल प्राप्त! Task #{reused_id} Reused & Sheet Updated!", 100)
+                step_callback("completed", f"Goal Reached! Task #{reused_id} Reused & Sheet Updated!", 100)
             return reused_id
 
         elif existing_check and existing_check.get("action") == "create_subtasks":
@@ -831,6 +831,6 @@ class SYUCmsBot:
                 self.update_google_sheet_cell(sheet_url, row_num, task_id)
 
             if step_callback:
-                step_callback("completed", f"मंजिल प्राप्त! Task #{task_id} successfully created and linked!", 100)
+                step_callback("completed", f"Goal Reached! Task #{task_id} successfully created and linked!", 100)
 
         return task_id
