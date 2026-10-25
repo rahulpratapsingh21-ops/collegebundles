@@ -96,6 +96,18 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // --- 3. Sheet Loading & Inspection ---
+  const useSampleSheetBtn = document.getElementById("useSampleSheetBtn");
+  const SAMPLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PSc-TNUTrR9CvJpvtEyIUSm532SSJCzEHmfzaNSWKYA/edit?gid=0#gid=0";
+
+  if (useSampleSheetBtn) {
+    useSampleSheetBtn.addEventListener("click", () => {
+      sheetUrlInput.value = SAMPLE_SHEET_URL;
+      currentSource = SAMPLE_SHEET_URL;
+      loadSheetInfo(currentSource);
+      appendLog("[SAMPLE] Sample template Google Sheet loaded.", "info");
+    });
+  }
+
   loadSheetBtn.addEventListener("click", () => {
     currentSource = sheetUrlInput.value.trim();
     if (!currentSource) {

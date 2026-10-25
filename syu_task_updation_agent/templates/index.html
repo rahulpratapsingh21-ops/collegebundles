@@ -123,14 +123,29 @@
           <!-- Tab Content: Google Sheet URL -->
           <div class="tab-content" id="googleSheetContent">
             <div class="input-field-group">
-              <label for="sheetUrlInput">Live Google Sheet Link</label>
+              <div class="label-row">
+                <label for="sheetUrlInput">Live Google Sheet Link</label>
+                <a href="https://docs.google.com/spreadsheets/d/1PSc-TNUTrR9CvJpvtEyIUSm532SSJCzEHmfzaNSWKYA/edit?gid=0#gid=0" target="_blank" rel="noopener noreferrer" class="sample-template-link" title="Open sample Google Sheet to copy the required column headers format">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                  <span>Sample Format / Headers Sheet</span>
+                </a>
+              </div>
               <div class="input-with-button">
                 <input type="text" id="sheetUrlInput" placeholder="Paste your Google Sheet link here (e.g. https://docs.google.com/spreadsheets/d/...)" value="">
                 <button class="action-btn-sm" id="loadSheetBtn">
                   <span>Load</span>
                 </button>
               </div>
-              <small class="helper-text">Task IDs will be automatically updated into Column E of this sheet.</small>
+              <div class="helper-row">
+                <small class="helper-text">Task IDs will be automatically updated into Column E of this sheet.</small>
+                <button type="button" class="use-sample-btn" id="useSampleSheetBtn" title="Auto-fill input with the sample template sheet URL">
+                  <span>Use Sample URL</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -145,7 +160,7 @@
                   <line x1="12" y1="3" x2="12" y2="15"></line>
                 </svg>
                 <p>Drag & Drop your Excel/CSV file here or <span class="highlight">browse</span></p>
-                <span class="file-format-hint">Supports .xlsx, .xls, .csv</span>
+                <span class="file-format-hint">Supports .xlsx, .xls, .csv • <a href="https://docs.google.com/spreadsheets/d/1PSc-TNUTrR9CvJpvtEyIUSm532SSJCzEHmfzaNSWKYA/edit?gid=0#gid=0" target="_blank" rel="noopener noreferrer" class="sample-inline-link">View Header Format</a></span>
               </div>
             </div>
             <div class="uploaded-file-banner hidden" id="uploadedFileBanner">
